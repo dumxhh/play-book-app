@@ -5,6 +5,7 @@ import HorarioSection from "@/components/HorarioSection";
 import UbicacionSection from "@/components/UbicacionSection";
 import PreciosSection from "@/components/PreciosSection";
 import ReservaModal from "@/components/ReservaModal";
+import ReservationsSection from "@/components/ReservationsSection";
 import type { Reservation } from "@/types/reservation";
 
 const Index = () => {
@@ -15,20 +16,24 @@ const Index = () => {
     {
       id: "1",
       sport: "futbol",
-      date: new Date(),
-      startTime: "14:00",
-      endTime: "15:30",
-      courtNumber: 1,
-      status: "confirmed"
+      date: "2024-01-06",
+      time: "14:00",
+      duration: 90,
+      customer_name: "Juan Pérez",
+      customer_phone: "1234567890",
+      amount: 120,
+      payment_status: "completed"
     },
     {
       id: "2",
-      sport: "paddle",
-      date: new Date(),
-      startTime: "16:00",
-      endTime: "17:00",
-      courtNumber: 1,
-      status: "confirmed"
+      sport: "paddle", 
+      date: "2024-01-06",
+      time: "16:00",
+      duration: 60,
+      customer_name: "María González",
+      customer_phone: "0987654321",
+      amount: 40,
+      payment_status: "completed"
     }
   ]);
 
@@ -60,6 +65,7 @@ const Index = () => {
       <main className="pt-16">
         <HeroSection onReservarClick={() => setIsReservaModalOpen(true)} />
         <HorarioSection reservations={reservations} />
+        <ReservationsSection />
         <UbicacionSection />
         <PreciosSection onReservarClick={() => setIsReservaModalOpen(true)} />
       </main>

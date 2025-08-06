@@ -3,14 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, Clock, Users, DollarSign, Check } from "lucide-react";
+import { CalendarIcon, Clock, Users, DollarSign, Check, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import type { Reservation, SportType } from "@/types/reservation";
 
 interface ReservaModalProps {
@@ -28,6 +28,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
   const [duration, setDuration] = useState(60);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
   const sports = [
@@ -48,27 +49,21 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
     if (!selectedDate) return false;
     
     return !existingReservations.some(reservation => {
-      const reservationDate = new Date(reservation.date);
-      if (reservationDate.toDateString() !== selectedDate.toDateString()) return false;
-      if (reservation.sport !== selectedSport) return false;
+      const reservationDate = reservation.date;
+      const isSameDate = format(new Date(reservationDate), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+      if (!isSameDate || reservation.sport !== selectedSport) return false;
       
-      const startHour = parseInt(reservation.startTime.split(':')[0]);
-      const endHour = parseInt(reservation.endTime.split(':')[0]);
-      const timeHour = parseInt(time.split(':')[0]);
-      
-      return timeHour >= startHour && timeHour < endHour;
+      const reservationTime = reservation.time;
+      return reservationTime === time;
     });
   };
 
-  const calculateEndTime = (startTime: string, durationMinutes: number) => {
-    const [hours, minutes] = startTime.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes + durationMinutes;
-    const endHours = Math.floor(totalMinutes / 60);
-    const endMins = totalMinutes % 60;
-    return `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
+  const calculateAmount = () => {
+    if (!selectedSportData) return 0;
+    return (selectedSportData.price * duration) / 60;
   };
 
-  const handleReserva = () => {
+  const handlePayment = async () => {
     if (!selectedSportData || !selectedDate || !selectedTime || !customerName || !customerPhone) {
       toast({
         title: "Error",
@@ -78,25 +73,43 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
       return;
     }
 
-    const endTime = calculateEndTime(selectedTime, duration);
-    
-    const newReservation: Omit<Reservation, 'id'> = {
-      sport: selectedSport as SportType,
-      date: selectedDate,
-      startTime: selectedTime,
-      endTime: endTime,
-      courtNumber: 1,
-      status: 'confirmed'
-    };
+    setIsProcessing(true);
 
-    onReserva(newReservation);
-    
-    toast({
-      title: "¡Reserva confirmada!",
-      description: `Tu cancha de ${selectedSportData.name} ha sido reservada para el ${format(selectedDate, "d 'de' MMMM", { locale: es })} a las ${selectedTime}`,
-    });
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
+          sport: selectedSport,
+          date: format(selectedDate, 'yyyy-MM-dd'),
+          time: selectedTime,
+          duration,
+          customerName,
+          customerPhone,
+          amount: calculateAmount()
+        }
+      });
 
-    handleClose();
+      if (error) throw error;
+
+      // Redirect to MercadoPago
+      window.open(data.init_point, '_blank');
+
+      toast({
+        title: "Redirigiendo a MercadoPago",
+        description: "Serás redirigido para completar el pago",
+      });
+
+      handleClose();
+
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar el pago. Intenta nuevamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleClose = () => {
@@ -104,237 +117,275 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
     setSelectedSport('');
     setSelectedDate(undefined);
     setSelectedTime('');
+    setDuration(60);
     setCustomerName('');
     setCustomerPhone('');
+    setIsProcessing(false);
     onClose();
   };
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+  const nextStep = () => {
+    if (step === 1 && selectedSport) {
+      const sportData = sports.find(s => s.id === selectedSport);
+      if (sportData) {
+        setDuration(sportData.defaultDuration);
+      }
+    }
+    if (step < 4) setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const canProceedToNextStep = () => {
+    switch (step) {
+      case 1: return selectedSport !== '';
+      case 2: return selectedDate !== undefined;
+      case 3: return selectedTime !== '';
+      case 4: return customerName.trim() !== '' && customerPhone.trim() !== '';
+      default: return false;
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">
-            Realizar Reserva - Paso {step} de 4
+          <DialogTitle className="text-2xl font-bold text-center">
+            Reservar Cancha
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Progress Bar */}
-          <div className="flex justify-center space-x-2">
-            {[1, 2, 3, 4].map((num) => (
-              <div
-                key={num}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  num <= step 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {num < step ? <Check className="w-4 h-4" /> : num}
+        {/* Progress indicator */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center space-x-2">
+            {[1, 2, 3, 4].map((stepNumber) => (
+              <div key={stepNumber} className="flex items-center">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    step >= stepNumber
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  {step > stepNumber ? <Check className="w-4 h-4" /> : stepNumber}
+                </div>
+                {stepNumber < 4 && (
+                  <div
+                    className={`w-8 h-0.5 ${
+                      step > stepNumber ? 'bg-primary' : 'bg-muted'
+                    }`}
+                  />
+                )}
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Step 1: Select Sport */}
-          {step === 1 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-center">Selecciona el deporte</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {sports.map((sport) => (
-                  <Card
-                    key={sport.id}
-                    className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                      selectedSport === sport.id 
-                        ? 'ring-2 ring-primary bg-primary/5' 
-                        : 'hover:bg-accent/50'
-                    }`}
-                    onClick={() => {
-                      setSelectedSport(sport.id as SportType);
-                      setDuration(sport.defaultDuration);
-                    }}
-                  >
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">{sport.emoji}</div>
-                      <h4 className="font-medium">{sport.name}</h4>
-                      <p className="text-sm text-muted-foreground">${sport.price}/hora</p>
-                      <p className="text-xs text-muted-foreground">{sport.capacity}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+        {/* Step 1: Sport Selection */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Selecciona tu deporte</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {sports.map((sport) => (
+                <Card
+                  key={sport.id}
+                  className={`cursor-pointer transition-all hover:shadow-md ${
+                    selectedSport === sport.id
+                      ? 'ring-2 ring-primary bg-primary/5'
+                      : 'hover:bg-accent/50'
+                  }`}
+                  onClick={() => setSelectedSport(sport.id as SportType)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-3xl">{sport.emoji}</span>
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{sport.name}</h4>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <DollarSign className="w-4 h-4" />
+                            <span>${sport.price}/h</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Clock className="w-4 h-4" />
+                            <span>{sport.defaultDuration}min</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Users className="w-4 h-4" />
+                            <span>{sport.capacity}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {selectedSport === sport.id && (
+                        <Check className="w-5 h-5 text-primary" />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Step 2: Select Date */}
-          {step === 2 && selectedSportData && (
+        {/* Step 2: Date Selection */}
+        {step === 2 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Selecciona la fecha</h3>
+            <div className="flex justify-center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                locale={es}
+                disabled={(date) => date < new Date()}
+                className="rounded-md border"
+              />
+            </div>
+            {selectedDate && (
+              <div className="text-center p-3 bg-accent rounded-lg">
+                <div className="flex items-center justify-center space-x-2">
+                  <CalendarIcon className="w-4 h-4" />
+                  <span>{format(selectedDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 3: Time Selection */}
+        {step === 3 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Selecciona el horario</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {timeSlots.map((time) => {
+                const available = isTimeSlotAvailable(time);
+                return (
+                  <Button
+                    key={time}
+                    variant={selectedTime === time ? "default" : "outline"}
+                    disabled={!available}
+                    onClick={() => setSelectedTime(time)}
+                    className="h-12"
+                  >
+                    <div className="text-center">
+                      <div className="font-medium">{time}</div>
+                      {!available && (
+                        <div className="text-xs text-muted-foreground">Ocupado</div>
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+            {selectedTime && selectedSportData && (
+              <div className="p-4 bg-accent rounded-lg space-y-2">
+                <div className="flex justify-between items-center">
+                  <span>Duración:</span>
+                  <Badge variant="secondary">{duration} minutos</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Precio:</span>
+                  <Badge variant="secondary">${calculateAmount()}</Badge>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 4: Customer Information and Payment */}
+        {step === 4 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Datos del cliente</h3>
+            
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-center">Selecciona la fecha</h3>
-              <div className="flex justify-center">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  locale={es}
-                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                  className="pointer-events-auto"
+              <div>
+                <Label htmlFor="customerName">Nombre completo</Label>
+                <Input
+                  id="customerName"
+                  placeholder="Tu nombre completo"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
                 />
               </div>
-              {selectedDate && (
-                <Card className="bg-accent/10">
-                  <CardContent className="p-4 text-center">
-                    <p className="font-medium">
-                      {format(selectedDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedSportData.name} - ${selectedSportData.price} por {selectedSportData.defaultDuration} min
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}
-
-          {/* Step 3: Select Time */}
-          {step === 3 && selectedDate && selectedSportData && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-center">Selecciona el horario</h3>
-              <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto">
-                {timeSlots.map((time) => {
-                  const available = isTimeSlotAvailable(time);
-                  return (
-                    <Button
-                      key={time}
-                      variant={selectedTime === time ? "default" : "outline"}
-                      disabled={!available}
-                      onClick={() => setSelectedTime(time)}
-                      className={`${
-                        selectedTime === time 
-                          ? 'bg-primary text-primary-foreground' 
-                          : available 
-                            ? 'hover:bg-accent' 
-                            : 'opacity-50'
-                      }`}
-                    >
-                      {time}
-                    </Button>
-                  );
-                })}
+              
+              <div>
+                <Label htmlFor="customerPhone">Teléfono</Label>
+                <Input
+                  id="customerPhone"
+                  placeholder="Tu número de teléfono"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                />
               </div>
-              
-              {selectedTime && (
-                <Card className="bg-accent/10">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Horario seleccionado</p>
-                        <p className="text-sm text-muted-foreground">
-                          {selectedTime} - {calculateEndTime(selectedTime, duration)}
-                        </p>
-                      </div>
-                      <Badge variant="secondary">
-                        {duration} min
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </div>
-          )}
 
-          {/* Step 4: Customer Info */}
-          {step === 4 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-center">Información de contacto</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Nombre completo *</Label>
-                  <Input
-                    id="name"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Tu nombre completo"
-                  />
+            {/* Reservation Summary */}
+            <div className="p-4 bg-accent rounded-lg space-y-3">
+              <h4 className="font-semibold">Resumen de tu reserva</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Deporte:</span>
+                  <span>{selectedSportData?.name} {selectedSportData?.emoji}</span>
                 </div>
-                
-                <div>
-                  <Label htmlFor="phone">Teléfono *</Label>
-                  <Input
-                    id="phone"
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="+1 (555) 123-4567"
-                  />
+                <div className="flex justify-between">
+                  <span>Fecha:</span>
+                  <span>{selectedDate && format(selectedDate, "d/MM/yyyy")}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Horario:</span>
+                  <span>{selectedTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Duración:</span>
+                  <span>{duration} minutos</span>
+                </div>
+                <div className="flex justify-between font-semibold text-base border-t pt-2">
+                  <span>Total:</span>
+                  <span>${calculateAmount()}</span>
                 </div>
               </div>
-
-              {/* Reservation Summary */}
-              <Card className="bg-gradient-card border-primary/20">
-                <CardContent className="p-4">
-                  <h4 className="font-semibold mb-3">Resumen de la reserva</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Deporte:</span>
-                      <span className="font-medium">{selectedSportData?.name}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Fecha:</span>
-                      <span className="font-medium">
-                        {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: es })}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Horario:</span>
-                      <span className="font-medium">
-                        {selectedTime} - {selectedTime && calculateEndTime(selectedTime, duration)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Duración:</span>
-                      <span className="font-medium">{duration} minutos</span>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between font-semibold">
-                      <span>Total:</span>
-                      <span className="text-primary">${selectedSportData?.price}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={step === 1 ? handleClose : prevStep}
-            >
-              {step === 1 ? 'Cancelar' : 'Anterior'}
+        {/* Navigation buttons */}
+        <div className="flex justify-between pt-4">
+          <div>
+            {step > 1 && (
+              <Button variant="outline" onClick={prevStep}>
+                Anterior
+              </Button>
+            )}
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button variant="ghost" onClick={handleClose}>
+              Cancelar
             </Button>
             
             {step < 4 ? (
               <Button
                 onClick={nextStep}
-                disabled={
-                  (step === 1 && !selectedSport) ||
-                  (step === 2 && !selectedDate) ||
-                  (step === 3 && !selectedTime)
-                }
-                className="bg-gradient-primary text-primary-foreground"
+                disabled={!canProceedToNextStep()}
               >
                 Siguiente
               </Button>
             ) : (
               <Button
-                onClick={handleReserva}
-                disabled={!customerName || !customerPhone}
-                className="bg-gradient-primary text-primary-foreground"
+                onClick={handlePayment}
+                disabled={!canProceedToNextStep() || isProcessing}
+                className="min-w-[150px]"
               >
-                <Check className="w-4 h-4 mr-2" />
-                Confirmar Reserva
+                {isProcessing ? (
+                  "Procesando..."
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <CreditCard className="w-4 h-4" />
+                    <span>Pagar con MercadoPago</span>
+                  </div>
+                )}
               </Button>
             )}
           </div>

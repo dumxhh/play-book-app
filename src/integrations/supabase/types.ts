@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      reservations: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          date: string
+          duration: number
+          id: string
+          payment_id: string | null
+          payment_status: string
+          sport: string
+          time: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          date: string
+          duration: number
+          id?: string
+          payment_id?: string | null
+          payment_status?: string
+          sport: string
+          time: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          date?: string
+          duration?: number
+          id?: string
+          payment_id?: string | null
+          payment_status?: string
+          sport?: string
+          time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          mercadopago_payment_id: string | null
+          mercadopago_preference_id: string | null
+          payment_method: string | null
+          reservation_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          mercadopago_payment_id?: string | null
+          mercadopago_preference_id?: string | null
+          payment_method?: string | null
+          reservation_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          mercadopago_payment_id?: string | null
+          mercadopago_preference_id?: string | null
+          payment_method?: string | null
+          reservation_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

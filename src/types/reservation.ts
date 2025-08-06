@@ -1,11 +1,14 @@
 export interface Reservation {
   id: string;
   sport: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  courtNumber: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
+  date: string;
+  time: string;
+  duration: number;
+  customer_name: string;
+  customer_phone: string;
+  amount: number;
+  payment_status: 'pending' | 'completed' | 'failed';
+  payment_id?: string;
 }
 
 export interface Court {

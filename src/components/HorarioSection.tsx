@@ -41,20 +41,15 @@ const HorarioSection = ({ reservations }: HorarioSectionProps) => {
   const isTimeSlotOccupied = (time: string) => {
     const dayReservations = getReservationsForDate(selectedDate);
     return dayReservations.some(reservation => {
-      const startHour = parseInt(reservation.startTime.split(':')[0]);
-      const timeHour = parseInt(time.split(':')[0]);
-      const endHour = parseInt(reservation.endTime.split(':')[0]);
-      return timeHour >= startHour && timeHour < endHour;
+      const reservationTime = reservation.time;
+      return reservationTime === time;
     });
   };
 
   const getReservationForTime = (time: string) => {
     const dayReservations = getReservationsForDate(selectedDate);
     return dayReservations.find(reservation => {
-      const startHour = parseInt(reservation.startTime.split(':')[0]);
-      const timeHour = parseInt(time.split(':')[0]);
-      const endHour = parseInt(reservation.endTime.split(':')[0]);
-      return timeHour >= startHour && timeHour < endHour;
+      return reservation.time === time;
     });
   };
 
