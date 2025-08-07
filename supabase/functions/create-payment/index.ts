@@ -67,9 +67,9 @@ Deno.serve(async (req) => {
         }
       },
       back_urls: {
-        success: `${req.headers.get('origin')}/`,
-        failure: `${req.headers.get('origin')}/`,
-        pending: `${req.headers.get('origin')}/`
+        success: `${req.headers.get('origin')}/payment/success`,
+        failure: `${req.headers.get('origin')}/payment/failure`,
+        pending: `${req.headers.get('origin')}/payment/pending`
       },
       auto_return: 'approved',
       external_reference: reservation.id

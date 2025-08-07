@@ -65,7 +65,6 @@ const Index = () => {
       <main className="pt-16">
         <HeroSection onReservarClick={() => setIsReservaModalOpen(true)} />
         <HorarioSection reservations={reservations} />
-        <ReservationsSection />
         <UbicacionSection />
         <PreciosSection onReservarClick={() => setIsReservaModalOpen(true)} />
       </main>
