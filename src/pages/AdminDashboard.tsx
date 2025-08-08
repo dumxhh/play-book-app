@@ -177,10 +177,19 @@ const AdminDashboard = () => {
                 <p className="text-sm text-muted-foreground">Gestión de reservas deportivas</p>
               </div>
             </div>
-            <Button variant="outline" onClick={handleLogout} className="flex items-center space-x-2">
-              <LogOut className="w-4 h-4" />
-              <span>Cerrar Sesión</span>
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate("/")} 
+                className="flex items-center space-x-2"
+              >
+                <span>← Volver</span>
+              </Button>
+              <Button variant="outline" onClick={handleLogout} className="flex items-center space-x-2">
+                <LogOut className="w-4 h-4" />
+                <span>Cerrar Sesión</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

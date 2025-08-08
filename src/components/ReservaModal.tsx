@@ -28,6 +28,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
   const [duration, setDuration] = useState(60);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
@@ -64,7 +65,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
   };
 
   const handlePayment = async () => {
-    if (!selectedSportData || !selectedDate || !selectedTime || !customerName || !customerPhone) {
+    if (!selectedSportData || !selectedDate || !selectedTime || !customerName || !customerPhone || !customerEmail) {
       toast({
         title: "Error",
         description: "Por favor completa todos los campos requeridos",
@@ -84,6 +85,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
           duration,
           customerName,
           customerPhone,
+          customerEmail,
           amount: calculateAmount()
         }
       });
@@ -120,6 +122,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
     setDuration(60);
     setCustomerName('');
     setCustomerPhone('');
+    setCustomerEmail('');
     setIsProcessing(false);
     onClose();
   };
@@ -143,17 +146,17 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
       case 1: return selectedSport !== '';
       case 2: return selectedDate !== undefined;
       case 3: return selectedTime !== '';
-      case 4: return customerName.trim() !== '' && customerPhone.trim() !== '';
+      case 4: return customerName.trim() !== '' && customerPhone.trim() !== '' && customerEmail.trim() !== '';
       default: return false;
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto court-background backdrop-blur-sm border-2 animate-rainbow-border">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">
-            Reservar Cancha
+          <DialogTitle className="text-2xl font-bold text-center animate-neon-flicker text-white">
+            ⚽ Reservar Cancha 🏓
           </DialogTitle>
         </DialogHeader>
 
@@ -319,6 +322,17 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
                   onChange={(e) => setCustomerPhone(e.target.value)}
                 />
               </div>
+              
+              <div>
+                <Label htmlFor="customerEmail">Email</Label>
+                <Input
+                  id="customerEmail"
+                  type="email"
+                  placeholder="tu@email.com"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                />
+              </div>
             </div>
 
             {/* Reservation Summary */}
@@ -376,14 +390,14 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
               <Button
                 onClick={handlePayment}
                 disabled={!canProceedToNextStep() || isProcessing}
-                className="min-w-[150px]"
+                className="min-w-[150px] neon-button animate-float"
               >
                 {isProcessing ? (
                   "Procesando..."
                 ) : (
                   <div className="flex items-center space-x-2">
                     <CreditCard className="w-4 h-4" />
-                    <span>Pagar con MercadoPago</span>
+                    <span>💳 Pagar con MercadoPago ✨</span>
                   </div>
                 )}
               </Button>

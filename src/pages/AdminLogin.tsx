@@ -54,8 +54,8 @@ const AdminLogin = () => {
           <div className="mx-auto mb-4 w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl text-foreground">Panel de Administración</CardTitle>
-          <p className="text-muted-foreground">Acceso restringido para propietarios</p>
+          <CardTitle className="text-2xl text-foreground">🏆 Iniciar Sesión</CardTitle>
+          <p className="text-muted-foreground">Acceso de administrador</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">

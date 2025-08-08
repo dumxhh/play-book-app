@@ -19,11 +19,14 @@ const UbicacionSection = () => {
           {/* Map */}
           <Card className="bg-gradient-card border-border shadow-soft overflow-hidden">
             <CardContent className="p-0">
-              <div className="aspect-video bg-muted/50 flex items-center justify-center relative">
+              <div 
+                className="aspect-video bg-muted/50 flex items-center justify-center relative cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => window.open('https://maps.google.com/?q=Club+Deportivo+Buenos+Aires', '_blank')}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20"></div>
                 <div className="text-center z-10">
-                  <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-                  <p className="text-lg font-medium text-foreground">Mapa Interactivo</p>
+                  <MapPin className="w-16 h-16 text-primary mx-auto mb-4 animate-bounce-soft" />
+                  <p className="text-lg font-medium text-foreground">🗺️ Mapa Interactivo</p>
                   <p className="text-sm text-muted-foreground">Click para abrir en Google Maps</p>
                 </div>
               </div>
@@ -46,9 +49,13 @@ const UbicacionSection = () => {
                 <p className="text-muted-foreground mb-4">
                   Ciudad Deportiva, CP 12345
                 </p>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full neon-button" 
+                  onClick={() => window.open('https://maps.google.com/?q=Club+Deportivo+Buenos+Aires', '_blank')}
+                >
                   <ExternalLink className="w-4 h-4 mr-2" />
-                  Abrir en Google Maps
+                  🗺️ Abrir en Google Maps
                 </Button>
               </CardContent>
             </Card>
