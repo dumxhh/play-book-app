@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { sport, date, time, duration, customerName, customerPhone, customerEmail, amount } = await req.json()
+    const { sport, date, time, duration, customerName, customerPhone, amount } = await req.json()
 
     console.log('Creating payment for:', { sport, date, time, customerName, amount })
 
@@ -31,7 +31,6 @@ Deno.serve(async (req) => {
         duration,
         customer_name: customerName,
         customer_phone: customerPhone,
-        customer_email: customerEmail,
         amount,
         payment_status: 'pending'
       })
@@ -121,24 +120,6 @@ Deno.serve(async (req) => {
       .eq('id', reservation.id)
 
     console.log('Transaction created and linked:', transaction)
-
-    // Send QR code email
-    try {
-      await supabase.functions.invoke('send-qr-email', {
-        body: {
-          email: customerEmail,
-          customerName,
-          sport,
-          date,
-          time,
-          amount
-        }
-      });
-      console.log('QR email sent successfully');
-    } catch (emailError) {
-      console.error('Error sending QR email:', emailError);
-      // Don't fail the payment if email fails
-    }
 
     return new Response(
       JSON.stringify({ 

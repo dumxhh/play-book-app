@@ -42,146 +42,30 @@ All colors MUST be HSL.
     --input: 120 20% 87%;
     --ring: 120 65% 32%;
 
-    /* Background gradients with more vibrant colors */
-    --gradient-main: linear-gradient(135deg, 
-      hsl(280, 100%, 70%) 0%, 
-      hsl(320, 100%, 65%) 20%, 
-      hsl(220, 100%, 70%) 40%, 
-      hsl(180, 100%, 65%) 60%, 
-      hsl(140, 100%, 70%) 80%, 
-      hsl(60, 100%, 75%) 100%
-    );
-    --gradient-hero: linear-gradient(135deg, 
-      hsl(300, 90%, 60%) 0%, 
-      hsl(240, 90%, 65%) 25%, 
-      hsl(180, 90%, 60%) 50%, 
-      hsl(120, 90%, 65%) 75%,
-      hsl(60, 90%, 70%) 100%
-    );
-    --gradient-card: linear-gradient(135deg, 
-      hsl(var(--background)) 0%, 
-      hsl(var(--background) / 0.8) 50%,
-      hsl(var(--muted) / 0.6) 100%
-    );
-    --gradient-neon: linear-gradient(45deg, 
-      hsl(320, 100%, 50%) 0%, 
-      hsl(280, 100%, 60%) 25%, 
-      hsl(240, 100%, 70%) 50%, 
-      hsl(200, 100%, 60%) 75%, 
-      hsl(160, 100%, 50%) 100%
-    );
-    
-    /* Glow effects with more intensity */
-    --shadow-glow: 0 0 60px hsl(var(--primary) / 0.6), 0 0 100px hsl(var(--primary) / 0.3);
-    --shadow-neon: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
-    --shadow-soft: 0 10px 30px -10px hsl(var(--foreground) / 0.2);
-    
-    /* Court background */
-    --court-background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"><defs><pattern id="grass" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="%23228B22"/><rect x="0" y="0" width="1" height="20" fill="%2332CD32"/><rect x="10" y="0" width="1" height="20" fill="%2332CD32"/></pattern></defs><rect width="1000" height="600" fill="url(%23grass)"/><rect x="50" y="50" width="900" height="500" fill="none" stroke="white" stroke-width="4"/><circle cx="500" cy="300" r="80" fill="none" stroke="white" stroke-width="4"/><line x1="500" y1="50" x2="500" y2="550" stroke="white" stroke-width="4"/></svg>');
-    
-    /* Animation variables */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-hero: linear-gradient(135deg, hsl(120 65% 32%), hsl(142 76% 36%), hsl(160 85% 40%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(120 15% 97%));
+    --gradient-main: linear-gradient(135deg, hsl(120 15% 97%), hsl(120 25% 92%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(120 65% 32% / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--accent) / 0.3);
 
     --radius: 0.75rem;
 
-    /* Custom animations with more dynamic effects */
-    @keyframes pulse-glow {
-      0%, 100% {
-        opacity: 0.3;
-        transform: scale(1);
-        filter: hue-rotate(0deg);
-      }
-      50% {
-        opacity: 0.8;
-        transform: scale(1.1);
-        filter: hue-rotate(90deg);
-      }
-    }
-
-    @keyframes bounce-soft {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-10px);
-      }
-      60% {
-        transform: translateY(-5px);
-      }
-    }
-
-    @keyframes neon-flicker {
-      0%, 100% { 
-        text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor; 
-      }
-      50% { 
-        text-shadow: 0 0 2px currentColor, 0 0 5px currentColor, 0 0 8px currentColor; 
-      }
-    }
-
-    @keyframes rainbow-border {
-      0% { border-color: hsl(0, 100%, 50%); }
-      16.66% { border-color: hsl(60, 100%, 50%); }
-      33.33% { border-color: hsl(120, 100%, 50%); }
-      50% { border-color: hsl(180, 100%, 50%); }
-      66.66% { border-color: hsl(240, 100%, 50%); }
-      83.33% { border-color: hsl(300, 100%, 50%); }
-      100% { border-color: hsl(360, 100%, 50%); }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .animate-pulse-glow {
-      animation: pulse-glow 3s ease-in-out infinite;
-    }
-
-    .animate-bounce-soft {
-      animation: bounce-soft 3s ease-in-out infinite;
-    }
-
-    .animate-neon-flicker {
-      animation: neon-flicker 2s ease-in-out infinite;
-    }
-
-    .animate-rainbow-border {
-      animation: rainbow-border 3s linear infinite;
-    }
-
-    .animate-float {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .neon-button {
-      background: var(--gradient-neon);
-      border: 2px solid transparent;
-      background-clip: padding-box;
-      box-shadow: var(--shadow-neon);
-      transition: var(--transition-bounce);
-    }
-
-    .neon-button:hover {
-      transform: scale(1.05);
-      box-shadow: var(--shadow-neon), 0 0 80px currentColor;
-    }
-
-    .court-background {
-      background-image: var(--court-background);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
