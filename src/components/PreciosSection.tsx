@@ -12,7 +12,7 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
     {
       sport: 'Fútbol',
       emoji: '⚽',
-      price: 80,
+      price: 15000,
       duration: 90,
       capacity: '10v10',
       features: ['Césped artificial', 'Iluminación LED', 'Vestuarios'],
@@ -21,7 +21,7 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
     {
       sport: 'Paddle',
       emoji: '🏓',
-      price: 40,
+      price: 8000,
       duration: 60,
       capacity: '2v2',
       features: ['Cancha cubierta', 'Equipamiento incluido', 'Aire acondicionado'],
@@ -31,7 +31,7 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
     {
       sport: 'Tenis',
       emoji: '🎾',
-      price: 35,
+      price: 7000,
       duration: 60,
       capacity: '1v1 o 2v2',
       features: ['Superficie dura', 'Iluminación nocturna', 'Red profesional'],
@@ -40,7 +40,7 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
     {
       sport: 'Golf',
       emoji: '🏌️',
-      price: 120,
+      price: 25000,
       duration: 180,
       capacity: '1-4 jugadores',
       features: ['18 hoyos', 'Carrito incluido', 'Driving range'],
@@ -51,14 +51,14 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
   const packages = [
     {
       name: 'Pase Mensual',
-      price: 299,
+      price: 59900,
       description: 'Acceso ilimitado a todas las canchas',
       features: ['Sin límite de reservas', '20% descuento en clases', 'Invitados con descuento'],
       color: 'bg-gradient-primary'
     },
     {
       name: 'Pase Familiar',
-      price: 499,
+      price: 99900,
       description: 'Para hasta 4 miembros de la familia',
       features: ['Acceso completo para 4', 'Eventos familiares gratis', 'Descuentos especiales'],
       color: 'bg-gradient-hero'

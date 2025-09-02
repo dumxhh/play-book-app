@@ -33,10 +33,10 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
   const { toast } = useToast();
 
   const sports = [
-    { id: 'futbol', name: 'Fútbol', price: 80, defaultDuration: 90, capacity: '10v10', emoji: '⚽' },
-    { id: 'paddle', name: 'Paddle', price: 40, defaultDuration: 60, capacity: '2v2', emoji: '🏓' },
-    { id: 'tenis', name: 'Tenis', price: 35, defaultDuration: 60, capacity: '1v1 o 2v2', emoji: '🎾' },
-    { id: 'golf', name: 'Golf', price: 120, defaultDuration: 180, capacity: '1-4 jugadores', emoji: '🏌️' }
+    { id: 'futbol', name: 'Fútbol', price: 15000, defaultDuration: 90, capacity: '10v10', emoji: '⚽' },
+    { id: 'paddle', name: 'Paddle', price: 8000, defaultDuration: 60, capacity: '2v2', emoji: '🏓' },
+    { id: 'tenis', name: 'Tenis', price: 7000, defaultDuration: 60, capacity: '1v1 o 2v2', emoji: '🎾' },
+    { id: 'golf', name: 'Golf', price: 25000, defaultDuration: 180, capacity: '1-4 jugadores', emoji: '🏌️' }
   ];
 
   const timeSlots = [
@@ -209,7 +209,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <div className="flex items-center space-x-1">
                             <DollarSign className="w-4 h-4" />
-                            <span>${sport.price}/h</span>
+                            <span>${sport.price.toLocaleString('es-AR')}/h</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Clock className="w-4 h-4" />
@@ -290,7 +290,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Precio:</span>
-                  <Badge variant="secondary">${calculateAmount()}</Badge>
+                  <Badge variant="secondary">${calculateAmount().toLocaleString('es-AR')}</Badge>
                 </div>
               </div>
             )}
@@ -357,7 +357,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
                 </div>
                 <div className="flex justify-between font-semibold text-base border-t pt-2">
                   <span>Total:</span>
-                  <span>${calculateAmount()}</span>
+                  <span>${calculateAmount().toLocaleString('es-AR')}</span>
                 </div>
               </div>
             </div>

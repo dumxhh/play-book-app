@@ -65,97 +65,98 @@ const HorarioSection = ({ reservations }: HorarioSectionProps) => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Calendar */}
-          <Card className="bg-gradient-card border-border shadow-soft">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-primary" />
-                <span>Selecciona una fecha</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                locale={es}
-                className="w-full p-3 pointer-events-auto"
-                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-              />
-              
-              {selectedDate && (
-                <div className="mt-4 p-4 bg-accent/10 rounded-lg">
-                  <p className="font-medium text-foreground">
-                    Fecha seleccionada:
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {format(selectedDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Schedule View */}
-          <Card className="bg-gradient-card border-border shadow-soft">
-            <CardHeader>
-              <CardTitle>Horarios del día</CardTitle>
-              {/* Sport Filter */}
-              <div className="flex flex-wrap gap-2">
-                {sports.map((sport) => (
-                  <Button
-                    key={sport.id}
-                    variant={selectedSport === sport.id ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedSport(sport.id)}
-                    className={selectedSport === sport.id ? "bg-gradient-primary text-primary-foreground" : ""}
-                  >
-                    {sport.name}
-                  </Button>
-                ))}
+        {/* Unified Date and Time Selection */}
+        <Card className="bg-gradient-card border-border shadow-soft max-w-6xl mx-auto">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Clock className="w-5 h-5 text-primary" />
+              <span>Selecciona fecha y horario</span>
+            </CardTitle>
+            {/* Sport Filter */}
+            <div className="flex flex-wrap gap-2">
+              {sports.map((sport) => (
+                <Button
+                  key={sport.id}
+                  variant={selectedSport === sport.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedSport(sport.id)}
+                  className={selectedSport === sport.id ? "bg-gradient-primary text-primary-foreground" : ""}
+                >
+                  {sport.name}
+                </Button>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Calendar Section */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Fecha</h3>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  locale={es}
+                  className="w-full p-3 pointer-events-auto border rounded-lg"
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                />
+                
+                {selectedDate && (
+                  <div className="p-4 bg-accent/10 rounded-lg">
+                    <p className="font-medium text-foreground">
+                      Fecha seleccionada:
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {format(selectedDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
+                    </p>
+                  </div>
+                )}
               </div>
-            </CardHeader>
-            <CardContent>
-              {selectedDate ? (
-                <div className="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto">
-                  {timeSlots.map((time) => {
-                    const isOccupied = isTimeSlotOccupied(time);
-                    const reservation = getReservationForTime(time);
-                    
-                    return (
-                      <div
-                        key={time}
-                        className={`p-3 rounded-lg border transition-all duration-200 ${
-                          isOccupied
-                            ? 'bg-destructive/10 border-destructive/30'
-                            : 'bg-success/10 border-success/30 hover:bg-success/20'
-                        }`}
-                      >
-                        <div className="text-sm font-medium">{time}</div>
-                        <Badge
-                          variant={isOccupied ? "destructive" : "default"}
-                          className="text-xs mt-1"
+
+              {/* Time Slots Section */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Horarios disponibles</h3>
+                {selectedDate ? (
+                  <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto">
+                    {timeSlots.map((time) => {
+                      const isOccupied = isTimeSlotOccupied(time);
+                      const reservation = getReservationForTime(time);
+                      
+                      return (
+                        <div
+                          key={time}
+                          className={`p-3 rounded-lg border transition-all duration-200 ${
+                            isOccupied
+                              ? 'bg-destructive/10 border-destructive/30'
+                              : 'bg-success/10 border-success/30 hover:bg-success/20 cursor-pointer'
+                          }`}
                         >
-                          {isOccupied ? 'Ocupado' : 'Disponible'}
-                        </Badge>
-                        {reservation && (
-                          <div className="text-xs text-muted-foreground mt-1 capitalize">
-                            {reservation.sport}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  Selecciona una fecha para ver los horarios disponibles
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                          <div className="text-sm font-medium">{time}</div>
+                          <Badge
+                            variant={isOccupied ? "destructive" : "default"}
+                            className="text-xs mt-1"
+                          >
+                            {isOccupied ? 'Ocupado' : 'Disponible'}
+                          </Badge>
+                          {reservation && (
+                            <div className="text-xs text-muted-foreground mt-1 capitalize">
+                              {reservation.sport}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-muted rounded-lg">
+                    <Clock className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Selecciona una fecha para ver los horarios disponibles</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
