@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CalendarCheck } from "lucide-react";
+import sportsCourtBackground from "@/assets/sports-court-background.jpg";
 
 interface HeroSectionProps {
   onReservarClick: () => void;
@@ -21,7 +22,7 @@ const HeroSection = ({ onReservarClick }: HeroSectionProps) => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('./src/assets/sports-court-background.jpg')`,
+          backgroundImage: `url(${sportsCourtBackground})`,
           opacity: 0.3
         }}
       ></div>

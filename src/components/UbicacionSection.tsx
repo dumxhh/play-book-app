@@ -5,6 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
+// Google Maps type declaration
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 const UbicacionSection = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [apiKey, setApiKey] = useState("");
@@ -13,22 +20,43 @@ const UbicacionSection = () => {
 
   const loadGoogleMaps = async (key: string) => {
     try {
+      // Check if Google Maps is already loaded
+      if (window.google && window.google.maps) {
+        initializeMap();
+        return;
+      }
+
       const { Loader } = await import('@googlemaps/js-api-loader');
       const loader = new Loader({
         apiKey: key,
         version: "weekly",
-        libraries: ["places"]
+        libraries: ["places"],
+        region: "AR",
+        language: "es"
       });
 
-      const google = await loader.load();
+      await loader.load();
+      initializeMap();
       
-      if (mapRef.current) {
-        const map = new google.maps.Map(mapRef.current, {
+    } catch (error) {
+      console.error("Error loading Google Maps:", error);
+      alert("Error al cargar Google Maps. Por favor verifica tu API key.");
+    }
+  };
+
+  const initializeMap = () => {
+    if (mapRef.current && window.google) {
+      try {
+        const map = new window.google.maps.Map(mapRef.current, {
           center: { lat: -34.6037, lng: -58.3816 }, // Buenos Aires coordinates
           zoom: 15,
+          mapTypeControl: true,
+          streetViewControl: true,
+          fullscreenControl: true,
+          zoomControl: true,
           styles: [
             {
-              featureType: "poi",
+              featureType: "poi.business",
               elementType: "labels",
               stylers: [{ visibility: "off" }]
             }
@@ -36,21 +64,22 @@ const UbicacionSection = () => {
         });
 
         // Add marker for the sports club
-        new google.maps.Marker({
+        new window.google.maps.Marker({
           position: { lat: -34.6037, lng: -58.3816 },
           map: map,
           title: "Club Deportivo",
+          animation: window.google.maps.Animation.DROP,
           icon: {
             url: "data:image/svg+xml;charset=UTF-8,%3csvg width='40' height='40' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z' fill='%23ef4444'/%3e%3ccircle cx='12' cy='9' r='2.5' fill='white'/%3e%3c/svg%3e",
-            scaledSize: new google.maps.Size(40, 40),
+            scaledSize: new window.google.maps.Size(40, 40),
           }
         });
 
         setMapLoaded(true);
         setShowApiKeyInput(false);
+      } catch (error) {
+        console.error("Error initializing map:", error);
       }
-    } catch (error) {
-      console.error("Error loading Google Maps:", error);
     }
   };
 
@@ -103,8 +132,11 @@ const UbicacionSection = () => {
               ) : (
                 <div 
                   ref={mapRef}
-                  className="w-full h-[400px]"
-                  style={{ minHeight: '400px' }}
+                  className="w-full h-[400px] rounded-lg"
+                  style={{ 
+                    minHeight: '400px',
+                    border: '1px solid hsl(var(--border))'
+                  }}
                 />
               )}
             </CardContent>
