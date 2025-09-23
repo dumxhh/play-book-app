@@ -27,6 +27,41 @@ const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Sistema de respuestas predefinidas
+  const getPresetResponse = (message: string): string | null => {
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('horario') || lowerMessage.includes('hora')) {
+      return 'Nuestros horarios son: Lunes a Viernes de 8:00 a 22:00, Sábados de 9:00 a 23:00, y Domingos de 10:00 a 20:00.';
+    }
+    
+    if (lowerMessage.includes('precio') || lowerMessage.includes('costo') || lowerMessage.includes('tarifa')) {
+      return 'Nuestros precios por hora son: Fútbol $120, Paddle $40, Tenis $35, Golf $80. Incluyen todos los servicios básicos.';
+    }
+    
+    if (lowerMessage.includes('reserva') || lowerMessage.includes('reservar')) {
+      return 'Para hacer una reserva, haz clic en el botón "RESERVA AHORA" en la página principal. Podrás elegir deporte, fecha, hora y realizar el pago con MercadoPago.';
+    }
+    
+    if (lowerMessage.includes('ubicación') || lowerMessage.includes('dirección') || lowerMessage.includes('donde')) {
+      return 'Nos encontramos en Av. Principal 123, Ciudad Deportiva. Tenemos estacionamiento gratuito y fácil acceso en transporte público.';
+    }
+    
+    if (lowerMessage.includes('pago') || lowerMessage.includes('mercadopago')) {
+      return 'Aceptamos pagos con MercadoPago de forma segura. Puedes pagar con tarjeta de crédito, débito o efectivo en Rapipago/Pago Fácil.';
+    }
+    
+    if (lowerMessage.includes('contacto') || lowerMessage.includes('teléfono') || lowerMessage.includes('whatsapp')) {
+      return 'Puedes contactarnos por WhatsApp al 2246-536537 o visitarnos en nuestras instalaciones. ¡Estamos aquí para ayudarte!';
+    }
+    
+    if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('buenas')) {
+      return '¡Hola! Bienvenido al club deportivo. ¿En qué puedo ayudarte? Puedo darte información sobre horarios, precios, reservas o ubicación.';
+    }
+    
+    return null;
+  };
+
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
@@ -38,19 +73,38 @@ const ChatBot = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
+    // Primero intentar respuesta predefinida
+    const presetResponse = getPresetResponse(currentMessage);
+    
+    if (presetResponse) {
+      setTimeout(() => {
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: presetResponse,
+          isBot: true,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setIsLoading(false);
+      }, 800);
+      return;
+    }
+
+    // Si no hay respuesta predefinida, usar OpenAI
     try {
       const { data, error } = await supabase.functions.invoke('chatbot-help', {
-        body: { message: inputMessage }
+        body: { message: currentMessage }
       });
 
       if (error) throw error;
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: data.response || 'Lo siento, hubo un error. Puedes contactarnos por WhatsApp al 2246-536537.',
+        text: data.response || 'Lo siento, no tengo información específica sobre eso. ¿Puedes ser más específico sobre horarios, precios, reservas o ubicación?',
         isBot: true,
         timestamp: new Date()
       };
@@ -58,15 +112,10 @@ const ChatBot = () => {
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
-      toast({
-        title: "Error",
-        description: "No se pudo enviar el mensaje. Intenta de nuevo.",
-        variant: "destructive"
-      });
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Lo siento, estoy teniendo problemas técnicos. Por favor contacta por WhatsApp al 2246-536537 para asistencia inmediata.',
+        text: 'Lo siento, no pude procesar tu consulta. Prueba preguntando sobre horarios, precios, reservas o ubicación. Para asistencia directa contacta al 2246-536537.',
         isBot: true,
         timestamp: new Date()
       };

@@ -6,7 +6,6 @@ import UbicacionSection from "@/components/UbicacionSection";
 import PreciosSection from "@/components/PreciosSection";
 import ReservaModal from "@/components/ReservaModal";
 import ChatBot from "@/components/ChatBot";
-import WhatsAppButton from "@/components/WhatsAppButton";
 import type { Reservation } from "@/types/reservation";
 
 const Index = () => {
@@ -78,7 +77,6 @@ const Index = () => {
       />
 
       <ChatBot />
-      <WhatsAppButton />
     </div>
   );
 };

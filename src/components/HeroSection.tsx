@@ -17,7 +17,14 @@ const HeroSection = ({ onReservarClick }: HeroSectionProps) => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-hero text-primary-foreground relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="absolute inset-0 bg-black/40"></div>
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/src/assets/sports-court-background.jpg')`,
+          opacity: 0.3
+        }}
+      ></div>
       <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse-glow"></div>
       <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/10 rounded-full blur-3xl animate-pulse-glow delay-1000"></div>
 
