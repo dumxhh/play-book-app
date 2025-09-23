@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -7,14 +7,43 @@ import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import type { Reservation, SportType } from "@/types/reservation";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HorarioSectionProps {
-  reservations: Reservation[];
+  reservations?: Reservation[];
 }
 
-const HorarioSection = ({ reservations }: HorarioSectionProps) => {
+const HorarioSection = ({ reservations: propReservations }: HorarioSectionProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSport, setSelectedSport] = useState<SportType | 'all'>('all');
+  const [reservations, setReservations] = useState<Reservation[]>(propReservations || []);
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  const fetchReservations = async () => {
+    const { data, error } = await supabase
+      .from('reservations')
+      .select('*')
+      .eq('payment_status', 'completed');
+    
+    if (!error && data) {
+      const formattedReservations: Reservation[] = data.map(reservation => ({
+        id: reservation.id,
+        sport: reservation.sport,
+        date: reservation.date,
+        time: reservation.time,
+        duration: reservation.duration,
+        customer_name: reservation.customer_name,
+        customer_phone: reservation.customer_phone,
+        amount: Number(reservation.amount),
+        payment_status: reservation.payment_status as 'pending' | 'completed' | 'failed',
+        payment_id: reservation.payment_id || undefined
+      }));
+      setReservations(formattedReservations);
+    }
+  };
 
   const sports = [
     { id: 'all' as const, name: 'Todos', color: 'bg-primary' },

@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart } from 'recharts';
-import { Calendar, DollarSign, TrendingUp, Users, Camera, Plus, Edit, Trash2, Eye, CheckCircle, XCircle, Clock, CreditCard } from 'lucide-react';
+import { Calendar, DollarSign, TrendingUp, Users, Camera, Plus, Edit, Trash2, Eye, CheckCircle, XCircle, Clock, CreditCard, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { Link } from 'react-router-dom';
 
 interface Reservation {
   id: string;
@@ -288,7 +289,15 @@ const AdminPanel = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-primary">Panel Administrativo</h1>
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Volver al Inicio
+              </Button>
+            </Link>
+            <h1 className="text-3xl font-bold text-primary">Panel Administrativo</h1>
+          </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={fetchReservations}>
               Actualizar

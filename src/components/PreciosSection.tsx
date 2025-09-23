@@ -2,12 +2,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Clock, Users, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import futbolCourtImg from "@/assets/futbol-court.jpg";
+import paddleCourtImg from "@/assets/paddle-court.jpg";
+import tenisCourtImg from "@/assets/tenis-court.jpg";
+import golfCourtImg from "@/assets/golf-court.jpg";
 
 interface PreciosSectionProps {
   onReservarClick: () => void;
 }
 
 const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
+  const [courtPhotos, setCourtPhotos] = useState<{[key: string]: string}>({});
+
+  const defaultPhotos = {
+    'Fútbol': futbolCourtImg,
+    'Paddle': paddleCourtImg,
+    'Tenis': tenisCourtImg,
+    'Golf': golfCourtImg
+  };
+
+  useEffect(() => {
+    fetchCourtPhotos();
+  }, []);
+
+  const fetchCourtPhotos = async () => {
+    const { data, error } = await supabase
+      .from('court_photos')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order');
+    
+    if (!error && data) {
+      const photoMap: {[key: string]: string} = {};
+      data.forEach(photo => {
+        photoMap[photo.sport] = photo.image_url;
+      });
+      setCourtPhotos(photoMap);
+    }
+  };
   const courts = [
     {
       sport: 'Fútbol',
@@ -91,9 +125,18 @@ const PreciosSection = ({ onReservarClick }: PreciosSectionProps) => {
                     Más Popular
                   </div>
                 )}
-                <CardHeader className="text-center">
-                  <div className="text-4xl mb-2">{court.emoji}</div>
-                  <CardTitle className="text-xl">{court.sport}</CardTitle>
+                <CardHeader className="text-center p-0">
+                  <div className="h-48 w-full overflow-hidden">
+                    <img 
+                      src={courtPhotos[court.sport] || defaultPhotos[court.sport]} 
+                      alt={`Cancha de ${court.sport}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="text-4xl mb-2">{court.emoji}</div>
+                    <CardTitle className="text-xl">{court.sport}</CardTitle>
+                  </div>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
                   <div>
