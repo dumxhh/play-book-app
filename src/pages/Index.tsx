@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import HorarioSection from "@/components/HorarioSection";
 import UbicacionSection from "@/components/UbicacionSection";
 import PreciosSection from "@/components/PreciosSection";
+import ReviewsSection from "@/components/ReviewsSection";
 import ReservaModal from "@/components/ReservaModal";
 import ChatBot from "@/components/ChatBot";
 import type { Reservation } from "@/types/reservation";
@@ -67,6 +68,7 @@ const Index = () => {
         <HorarioSection />
         <UbicacionSection />
         <PreciosSection onReservarClick={() => setIsReservaModalOpen(true)} />
+        <ReviewsSection />
       </main>
 
       <ReservaModal

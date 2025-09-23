@@ -21,7 +21,7 @@ const HeroSection = ({ onReservarClick }: HeroSectionProps) => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/src/assets/sports-court-background.jpg')`,
+          backgroundImage: `url('./src/assets/sports-court-background.jpg')`,
           opacity: 0.3
         }}
       ></div>

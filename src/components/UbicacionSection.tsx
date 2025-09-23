@@ -103,7 +103,8 @@ const UbicacionSection = () => {
               ) : (
                 <div 
                   ref={mapRef}
-                  className="aspect-video w-full min-h-[300px]"
+                  className="w-full h-[400px]"
+                  style={{ minHeight: '400px' }}
                 />
               )}
             </CardContent>
