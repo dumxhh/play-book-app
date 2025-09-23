@@ -55,7 +55,7 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
             ))}
             
             {/* Admin Access */}
-            <Link to="/admin/login">
+            <Link to="/admin/panel">
               <Button variant="outline" size="sm" className="flex items-center space-x-2">
                 <Shield className="w-4 h-4" />
                 <span>Admin</span>
@@ -97,7 +97,7 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                 </button>
               ))}
               
-              <Link to="/admin/login" className="py-2 px-4">
+              <Link to="/admin/panel" className="py-2 px-4">
                 <Button variant="outline" size="sm" className="w-full flex items-center justify-center space-x-2">
                   <Shield className="w-4 h-4" />
                   <span>Acceso Admin</span>

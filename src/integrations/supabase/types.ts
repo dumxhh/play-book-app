@@ -7,17 +7,54 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
+      court_photos: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          id: string
+          image_url: string
+          is_active: boolean | null
+          sport: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          sport: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          sport?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reservations: {
         Row: {
           amount: number
           created_at: string
+          customer_email: string | null
           customer_name: string
           customer_phone: string
           date: string
@@ -32,6 +69,7 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          customer_email?: string | null
           customer_name: string
           customer_phone: string
           date: string
@@ -46,6 +84,7 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          customer_email?: string | null
           customer_name?: string
           customer_phone?: string
           date?: string
