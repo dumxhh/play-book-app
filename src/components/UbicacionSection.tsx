@@ -1,151 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Car, Bus, ExternalLink, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { MapPin, Phone, Clock, Car, Bus, ExternalLink } from "lucide-react";
 
 const UbicacionSection = () => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<any>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    initializeMap();
-  }, []);
-
-  const initializeMap = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Get Mapbox token from edge function
-      const { data, error: tokenError } = await supabase.functions.invoke('get-mapbox-token');
-      
-      if (tokenError) {
-        throw new Error('No se pudo obtener el token de Mapbox');
-      }
-
-      if (!data?.token) {
-        throw new Error('Token de Mapbox no configurado');
-      }
-
-      // Import Mapbox GL JS
-      const mapboxgl = await import('mapbox-gl');
-      
-      // Set access token
-      mapboxgl.default.accessToken = data.token;
-
-      if (!mapContainer.current) return;
-
-      // Initialize map
-      map.current = new mapboxgl.default.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-58.3816, -34.6037], // Buenos Aires coordinates
-        zoom: 15,
-        pitch: 45,
-        bearing: -45
-      });
-
-      // Add navigation controls
-      map.current.addControl(
-        new mapboxgl.default.NavigationControl({
-          visualizePitch: true,
-        }),
-        'top-right'
-      );
-
-      // Add full screen control
-      map.current.addControl(new mapboxgl.default.FullscreenControl(), 'top-left');
-
-      // Add marker for the sports club
-      new mapboxgl.default.Marker({
-        color: '#ef4444',
-        scale: 1.5
-      })
-        .setLngLat([-58.3816, -34.6037])
-        .setPopup(
-          new mapboxgl.default.Popup({ offset: 25 })
-            .setHTML(`
-              <div style="padding: 10px;">
-                <h3 style="margin: 0 0 5px 0; font-weight: bold;">Club Deportivo</h3>
-                <p style="margin: 0; color: #666;">Av. Deportiva 123, Centro Deportivo</p>
-                <p style="margin: 5px 0 0 0; color: #666;">¡Te esperamos!</p>
-              </div>
-            `)
-        )
-        .addTo(map.current);
-
-      // Add some nice effects when map loads
-      map.current.on('load', () => {
-        setMapLoaded(true);
-        setLoading(false);
-        
-        // Add a subtle building layer
-        map.current.addLayer({
-          'id': '3d-buildings',
-          'source': 'composite',
-          'source-layer': 'building',
-          'filter': ['==', 'extrude', 'true'],
-          'type': 'fill-extrusion',
-          'minzoom': 15,
-          'paint': {
-            'fill-extrusion-color': '#aaa',
-            'fill-extrusion-height': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'height']
-            ],
-            'fill-extrusion-base': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'min_height']
-            ],
-            'fill-extrusion-opacity': 0.6
-          }
-        });
-      });
-
-      map.current.on('error', (e: any) => {
-        console.error('Mapbox error:', e);
-        setError('Error al cargar el mapa');
-        setLoading(false);
-      });
-
-    } catch (error) {
-      console.error('Error initializing map:', error);
-      setError(error instanceof Error ? error.message : 'Error al cargar el mapa');
-      setLoading(false);
-      toast({
-        title: "Error del mapa",
-        description: "No se pudo cargar el mapa interactivo. La ubicación sigue siendo accesible.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (map.current) {
-        map.current.remove();
-      }
-    };
-  }, []);
-
   return (
     <section id="ubicacion" className="py-20">
       <div className="container mx-auto px-4">
@@ -159,41 +17,26 @@ const UbicacionSection = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Map */}
+          {/* Static Map Placeholder */}
           <Card className="bg-gradient-card border-border shadow-soft overflow-hidden">
             <CardContent className="p-0">
-              {loading ? (
-                <div className="aspect-video bg-muted/50 flex flex-col items-center justify-center p-6 space-y-4">
-                  <MapPin className="w-16 h-16 text-primary animate-bounce" />
-                  <div className="text-center space-y-2">
-                    <p className="text-lg font-medium text-foreground">Cargando Mapa Interactivo</p>
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    </div>
-                  </div>
+              <div className="aspect-video bg-muted/50 flex flex-col items-center justify-center p-6 space-y-4">
+                <MapPin className="w-16 h-16 text-primary" />
+                <div className="text-center space-y-2">
+                  <p className="text-lg font-medium text-foreground">Mapa Interactivo</p>
+                  <p className="text-sm text-muted-foreground">
+                    Pronto disponible - mientras tanto puedes usar Google Maps
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4" 
+                    onClick={() => window.open('https://maps.google.com/?q=Av+Deportiva+123+Centro+Deportivo', '_blank')}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    🗺️ Abrir en Google Maps
+                  </Button>
                 </div>
-              ) : error ? (
-                <div className="aspect-video bg-muted/50 flex flex-col items-center justify-center p-6 space-y-4">
-                  <AlertCircle className="w-16 h-16 text-destructive" />
-                  <div className="text-center space-y-2">
-                    <p className="text-lg font-medium text-foreground">Error al cargar el mapa</p>
-                    <p className="text-sm text-muted-foreground">{error}</p>
-                  </div>
-                  <Alert className="max-w-md">
-                    <AlertDescription className="text-xs text-center">
-                      Puedes encontrarnos en <strong>Av. Deportiva 123, Centro Deportivo</strong> o usar el enlace de Google Maps abajo.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              ) : (
-                <div 
-                  ref={mapContainer}
-                  className="w-full h-[400px] rounded-lg"
-                  style={{ 
-                    minHeight: '400px'
-                  }}
-                />
-              )}
+              </div>
             </CardContent>
           </Card>
 
