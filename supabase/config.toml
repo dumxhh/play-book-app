@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.send-tournament-request]
 verify_jwt = false
 
+[functions.get-mapbox-token]
+verify_jwt = false
+
 [functions.chatbot-help]
 verify_jwt = false
 
