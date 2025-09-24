@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
+import { Bot, X, Send, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -140,13 +140,13 @@ const ChatBot = () => {
           className="h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg animate-pulse"
           size="icon"
         >
-          <MessageCircle className="h-6 w-6" />
+          <Bot className="h-6 w-6" />
         </Button>
       ) : (
         <Card className="w-80 h-96 shadow-xl border-0 bg-background/95 backdrop-blur">
           <div className="flex items-center justify-between p-4 border-b bg-primary text-primary-foreground rounded-t-lg">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
+              <Bot className="h-5 w-5" />
               <span className="font-semibold">Asistente Virtual</span>
             </div>
             <Button
