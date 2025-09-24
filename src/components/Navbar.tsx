@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   activeSection: string;
@@ -52,6 +53,12 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                 {item.label}
               </button>
             ))}
+            <Link to="/torneos">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Torneos
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -87,6 +94,12 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                   {item.label}
                 </button>
               ))}
+              <Link to="/torneos" className="py-2 px-4">
+                <Button variant="outline" size="sm" className="w-full flex items-center gap-2">
+                  <Trophy className="h-4 w-4" />
+                  Torneos
+                </Button>
+              </Link>
             </div>
           </div>
         )}

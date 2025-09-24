@@ -7,8 +7,7 @@ import PreciosSection from "@/components/PreciosSection";
 import ReviewsSection from "@/components/ReviewsSection";
 import Footer from "@/components/Footer";
 import InteractiveGallery from "@/components/InteractiveGallery";
-import WeatherSection from "@/components/WeatherSection";
-import TournamentSection from "@/components/TournamentSection";
+import CompactWeatherSection from "@/components/CompactWeatherSection";
 import ReservaModal from "@/components/ReservaModal";
 import ChatBot from "@/components/ChatBot";
 import type { Reservation } from "@/types/reservation";
@@ -70,8 +69,7 @@ const Index = () => {
       <main className="pt-16">
         <HeroSection onReservarClick={() => setIsReservaModalOpen(true)} />
         <InteractiveGallery />
-        <WeatherSection />
-        <TournamentSection />
+        <CompactWeatherSection />
         <HorarioSection />
         <UbicacionSection />
         <PreciosSection onReservarClick={() => setIsReservaModalOpen(true)} />
