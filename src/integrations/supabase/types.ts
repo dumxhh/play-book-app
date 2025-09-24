@@ -53,6 +53,7 @@ export type Database = {
       reservations: {
         Row: {
           amount: number
+          blocked_reason: string | null
           created_at: string
           customer_email: string | null
           customer_name: string
@@ -60,14 +61,20 @@ export type Database = {
           date: string
           duration: number
           id: string
+          internal_notes: string | null
+          is_blocked: boolean | null
           payment_id: string | null
           payment_status: string
+          refund_amount: number | null
+          refund_date: string | null
+          refund_status: string | null
           sport: string
           time: string
           updated_at: string
         }
         Insert: {
           amount: number
+          blocked_reason?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name: string
@@ -75,14 +82,20 @@ export type Database = {
           date: string
           duration: number
           id?: string
+          internal_notes?: string | null
+          is_blocked?: boolean | null
           payment_id?: string | null
           payment_status?: string
+          refund_amount?: number | null
+          refund_date?: string | null
+          refund_status?: string | null
           sport: string
           time: string
           updated_at?: string
         }
         Update: {
           amount?: number
+          blocked_reason?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string
@@ -90,8 +103,13 @@ export type Database = {
           date?: string
           duration?: number
           id?: string
+          internal_notes?: string | null
+          is_blocked?: boolean | null
           payment_id?: string | null
           payment_status?: string
+          refund_amount?: number | null
+          refund_date?: string | null
+          refund_status?: string | null
           sport?: string
           time?: string
           updated_at?: string
@@ -105,6 +123,108 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      time_blocks: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date: string
+          end_time: string
+          id: string
+          reason: string
+          sport: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date: string
+          end_time: string
+          id?: string
+          reason: string
+          sport: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          end_time?: string
+          id?: string
+          reason?: string
+          sport?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tournaments: {
+        Row: {
+          club_name: string
+          contact_email: string | null
+          contact_name: string
+          contact_phone: string
+          court_type: string | null
+          created_at: string
+          description: string | null
+          end_time: string
+          entry_fee: number
+          id: string
+          max_participants: number | null
+          name: string
+          participants_count: number
+          sport: string
+          start_time: string
+          status: string
+          total_prize: number | null
+          tournament_date: string
+          updated_at: string
+        }
+        Insert: {
+          club_name: string
+          contact_email?: string | null
+          contact_name: string
+          contact_phone: string
+          court_type?: string | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          entry_fee?: number
+          id?: string
+          max_participants?: number | null
+          name: string
+          participants_count?: number
+          sport: string
+          start_time: string
+          status?: string
+          total_prize?: number | null
+          tournament_date: string
+          updated_at?: string
+        }
+        Update: {
+          club_name?: string
+          contact_email?: string | null
+          contact_name?: string
+          contact_phone?: string
+          court_type?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          entry_fee?: number
+          id?: string
+          max_participants?: number | null
+          name?: string
+          participants_count?: number
+          sport?: string
+          start_time?: string
+          status?: string
+          total_prize?: number | null
+          tournament_date?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       transactions: {
         Row: {

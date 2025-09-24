@@ -13,6 +13,7 @@ import { Calendar, DollarSign, TrendingUp, Users, Camera, Plus, Edit, Trash2, Ey
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Link } from 'react-router-dom';
+import AdminReservationManagement from '@/components/AdminReservationManagement';
 
 interface Reservation {
   id: string;
@@ -369,9 +370,10 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="reservations">Reservas</TabsTrigger>
+            <TabsTrigger value="admin-reservations">Gestión Reservas</TabsTrigger>
             <TabsTrigger value="photos">Fotos Canchas</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
@@ -421,6 +423,10 @@ const AdminPanel = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="admin-reservations" className="space-y-4">
+            <AdminReservationManagement />
           </TabsContent>
 
           <TabsContent value="reservations" className="space-y-4">
