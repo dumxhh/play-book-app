@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.payment-webhook]
 verify_jwt = false
+
+[functions.send-tournament-request]
+verify_jwt = false
+
+[functions.chatbot-help]
+verify_jwt = false
+
+[functions.send-qr-email]
+verify_jwt = false
