@@ -81,7 +81,7 @@ const FloatingWeather = () => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 max-w-xs">
+    <div className="fixed bottom-4 left-4 z-40 max-w-xs">
       <Card className="shadow-lg bg-white/95 backdrop-blur-sm border border-white/20">
         <CardContent className="p-3">
           {weather && (

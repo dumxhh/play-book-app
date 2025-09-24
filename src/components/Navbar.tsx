@@ -54,10 +54,9 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
               </button>
             ))}
             <Link to="/torneos">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
+              <button className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
                 Torneos
-              </Button>
+              </button>
             </Link>
           </div>
 
@@ -94,11 +93,10 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                   {item.label}
                 </button>
               ))}
-              <Link to="/torneos" className="py-2 px-4">
-                <Button variant="outline" size="sm" className="w-full flex items-center gap-2">
-                  <Trophy className="h-4 w-4" />
+              <Link to="/torneos">
+                <button className="text-left py-2 px-4 rounded-lg transition-colors text-muted-foreground hover:bg-muted w-full">
                   Torneos
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
