@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Link } from 'react-router-dom';
 import AdminReservationManagement from '@/components/AdminReservationManagement';
+import GalleryManagement from '@/components/GalleryManagement';
 
 interface Reservation {
   id: string;
@@ -483,97 +484,7 @@ const AdminPanel = () => {
           </TabsContent>
 
           <TabsContent value="photos" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestión de Fotos de Canchas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Agregar Nueva Foto</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="sport">Deporte</Label>
-                        <Select value={newPhoto.sport} onValueChange={(value) => setNewPhoto({...newPhoto, sport: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar deporte" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="futbol">Fútbol</SelectItem>
-                            <SelectItem value="paddle">Paddle</SelectItem>
-                            <SelectItem value="tenis">Tenis</SelectItem>
-                            <SelectItem value="golf">Golf</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="image_url">URL de Imagen</Label>
-                        <Input
-                          id="image_url"
-                          value={newPhoto.image_url}
-                          onChange={(e) => setNewPhoto({...newPhoto, image_url: e.target.value})}
-                          placeholder="https://ejemplo.com/imagen.jpg"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="title">Título (opcional)</Label>
-                        <Input
-                          id="title"
-                          value={newPhoto.title}
-                          onChange={(e) => setNewPhoto({...newPhoto, title: e.target.value})}
-                          placeholder="Título de la foto"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="description">Descripción (opcional)</Label>
-                        <Textarea
-                          id="description"
-                          value={newPhoto.description}
-                          onChange={(e) => setNewPhoto({...newPhoto, description: e.target.value})}
-                          placeholder="Descripción de la cancha"
-                        />
-                      </div>
-                      <Button onClick={addPhoto} className="w-full">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Agregar Foto
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Fotos Existentes</h3>
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
-                      {photos.map((photo) => (
-                        <Card key={photo.id} className="p-3">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={photo.image_url}
-                              alt={photo.title || `Cancha de ${photo.sport}`}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                            <div className="flex-1">
-                              <p className="font-medium">{photo.title || `Cancha de ${photo.sport}`}</p>
-                              <p className="text-sm text-muted-foreground capitalize">{photo.sport}</p>
-                              {photo.description && (
-                                <p className="text-xs text-muted-foreground">{photo.description}</p>
-                              )}
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => deletePhoto(photo.id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <GalleryManagement photos={photos} onPhotosUpdate={fetchPhotos} />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
