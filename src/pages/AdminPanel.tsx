@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart } from 'recharts';
 import { Calendar, DollarSign, TrendingUp, Users, Camera, Plus, Edit, Trash2, Eye, CheckCircle, XCircle, Clock, CreditCard, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import AdminReservationManagement from '@/components/AdminReservationManagement';
 import GalleryManagement from '@/components/GalleryManagement';
