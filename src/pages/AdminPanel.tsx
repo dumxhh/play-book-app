@@ -76,7 +76,7 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
-    if (!isLoggedIn) {
+    if (isLoggedIn !== "true") {
       navigate("/admin/login");
       return;
     }
