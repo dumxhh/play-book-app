@@ -136,23 +136,41 @@ const AdminReservationManagement = () => {
   };
 
   const fetchReservations = async () => {
-    const { data, error } = await supabase
-      .from('reservations')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    setReservations((data || []) as Reservation[]);
+      if (error) throw error;
+      setReservations((data || []) as Reservation[]);
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar las reservas",
+        variant: "destructive"
+      });
+    }
   };
 
   const fetchTimeBlocks = async () => {
-    const { data, error } = await supabase
-      .from('time_blocks')
-      .select('*')
-      .order('date', { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from('time_blocks')
+        .select('*')
+        .order('date', { ascending: true });
 
-    if (error) throw error;
-    setTimeBlocks(data || []);
+      if (error) throw error;
+      setTimeBlocks(data || []);
+    } catch (error) {
+      console.error('Error fetching time blocks:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar los horarios bloqueados",
+        variant: "destructive"
+      });
+    }
   };
 
   const openEditModal = (reservation: Reservation) => {

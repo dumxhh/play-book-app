@@ -64,16 +64,49 @@ Deno.serve(async (req) => {
           paymentStatus = 'failed'
         }
 
-        const { error: reservationError } = await supabase
+        const { data: reservationData, error: reservationError } = await supabase
           .from('reservations')
           .update({ payment_status: paymentStatus })
           .eq('id', reservationId)
+          .select()
+          .single()
 
         if (reservationError) {
           console.error('Error updating reservation:', reservationError)
+        } else {
+          console.log(`Reservation ${reservationId} updated to status: ${paymentStatus}`)
+          
+          // Si el pago fue aprobado y hay email, enviar QR automáticamente
+          if (paymentStatus === 'completed' && reservationData?.customer_email) {
+            try {
+              console.log('Sending QR email to:', reservationData.customer_email)
+              
+              const emailResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-qr-email`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: reservationData.customer_email,
+                  customerName: reservationData.customer_name,
+                  sport: reservationData.sport,
+                  date: reservationData.date,
+                  time: reservationData.time,
+                  amount: reservationData.amount
+                })
+              })
+              
+              if (emailResponse.ok) {
+                console.log('QR email sent successfully')
+              } else {
+                console.error('Failed to send QR email:', await emailResponse.text())
+              }
+            } catch (emailError) {
+              console.error('Error sending QR email:', emailError)
+            }
+          }
         }
-
-        console.log(`Reservation ${reservationId} updated to status: ${paymentStatus}`)
       }
     }
 
