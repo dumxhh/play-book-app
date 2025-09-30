@@ -174,37 +174,53 @@ const AdminReservationManagement = () => {
   };
 
   const openEditModal = (reservation: Reservation) => {
-    setSelectedReservation(reservation);
-    setEditForm({
-      sport: reservation.sport,
-      date: new Date(reservation.date),
-      time: reservation.time,
-      duration: reservation.duration.toString(),
-      customer_name: reservation.customer_name,
-      customer_phone: reservation.customer_phone,
-      customer_email: reservation.customer_email || '',
-      amount: reservation.amount.toString(),
-      payment_status: reservation.payment_status,
-      internal_notes: reservation.internal_notes || ''
-    });
-    setIsEditModalOpen(true);
+    try {
+      setSelectedReservation(reservation);
+      setEditForm({
+        sport: reservation.sport,
+        date: reservation.date ? new Date(reservation.date) : null,
+        time: reservation.time || '',
+        duration: reservation.duration ? reservation.duration.toString() : '60',
+        customer_name: reservation.customer_name || '',
+        customer_phone: reservation.customer_phone || '',
+        customer_email: reservation.customer_email || '',
+        amount: reservation.amount ? reservation.amount.toString() : '0',
+        payment_status: reservation.payment_status || 'pending',
+        internal_notes: reservation.internal_notes || ''
+      });
+      setIsEditModalOpen(true);
+    } catch (error) {
+      console.error('Error opening edit modal:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo abrir el editor de reserva",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleUpdateReservation = async () => {
-    if (!selectedReservation) return;
+    if (!selectedReservation || !editForm.date) {
+      toast({
+        title: "Error",
+        description: "Datos incompletos para actualizar la reserva",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       const { error } = await supabase
         .from('reservations')
         .update({
           sport: editForm.sport,
-          date: editForm.date?.toISOString().split('T')[0],
+          date: format(editForm.date, 'yyyy-MM-dd'),
           time: editForm.time,
-          duration: parseInt(editForm.duration),
+          duration: parseInt(editForm.duration) || 60,
           customer_name: editForm.customer_name,
           customer_phone: editForm.customer_phone,
           customer_email: editForm.customer_email || null,
-          amount: parseFloat(editForm.amount),
+          amount: parseFloat(editForm.amount) || 0,
           payment_status: editForm.payment_status,
           internal_notes: editForm.internal_notes || null
         })
@@ -213,17 +229,17 @@ const AdminReservationManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Reserva actualizada",
-        description: "La reserva se ha actualizado correctamente."
+        title: "Éxito",
+        description: "Reserva actualizada correctamente"
       });
 
       setIsEditModalOpen(false);
-      fetchReservations();
+      await fetchReservations();
     } catch (error) {
       console.error('Error updating reservation:', error);
       toast({
         title: "Error",
-        description: "No se pudo actualizar la reserva.",
+        description: "No se pudo actualizar la reserva",
         variant: "destructive"
       });
     }

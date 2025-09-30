@@ -47,28 +47,75 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
   const selectedSportData = sports.find(s => s.id === selectedSport);
 
   const isTimeSlotAvailable = (time: string) => {
-    if (!selectedDate) return false;
+    if (!selectedDate || !selectedSport) return false;
     
-    return !existingReservations.some(reservation => {
-      const reservationDate = reservation.date;
-      const isSameDate = format(new Date(reservationDate), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
-      if (!isSameDate || reservation.sport !== selectedSport) return false;
-      
-      const reservationTime = reservation.time;
-      return reservationTime === time;
-    });
+    try {
+      return !existingReservations.some(reservation => {
+        if (!reservation.date || !reservation.sport || !reservation.time) return false;
+        
+        const reservationDate = reservation.date;
+        const isSameDate = format(new Date(reservationDate), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
+        if (!isSameDate || reservation.sport !== selectedSport) return false;
+        
+        const reservationTime = reservation.time;
+        return reservationTime === time;
+      });
+    } catch (error) {
+      console.error('Error checking time slot availability:', error);
+      return false;
+    }
   };
 
   const calculateAmount = () => {
-    if (!selectedSportData) return 0;
-    return (selectedSportData.price * duration) / 60;
+    if (!selectedSportData || !duration || duration <= 0) return 0;
+    const amount = (selectedSportData.price * duration) / 60;
+    return Math.round(amount); // Redondear para evitar decimales
   };
 
   const handlePayment = async () => {
-    if (!selectedSportData || !selectedDate || !selectedTime || !customerName || !customerPhone || !customerEmail) {
+    // Validaciones
+    if (!selectedSportData) {
       toast({
         title: "Error",
-        description: "Por favor completa todos los campos requeridos",
+        description: "Por favor selecciona un deporte",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedDate) {
+      toast({
+        title: "Error",
+        description: "Por favor selecciona una fecha",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedTime) {
+      toast({
+        title: "Error",
+        description: "Por favor selecciona un horario",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!customerName.trim() || !customerPhone.trim() || !customerEmail.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor completa todos tus datos",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      toast({
+        title: "Error",
+        description: "Por favor ingresa un email válido",
         variant: "destructive"
       });
       return;
@@ -77,39 +124,64 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
     setIsProcessing(true);
 
     try {
+      const amount = calculateAmount();
+      
+      if (!amount || amount <= 0) {
+        throw new Error("Monto inválido");
+      }
+
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: {
           sport: selectedSport,
           date: format(selectedDate, 'yyyy-MM-dd'),
           time: selectedTime,
           duration,
-          customerName,
-          customerPhone,
-          customerEmail,
-          amount: calculateAmount()
+          customerName: customerName.trim(),
+          customerPhone: customerPhone.trim(),
+          customerEmail: customerEmail.trim(),
+          amount
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (!data || !data.init_point) {
+        throw new Error("No se recibió el link de pago");
+      }
 
       // Redirect to MercadoPago
-      window.open(data.init_point, '_blank');
+      const paymentWindow = window.open(data.init_point, '_blank');
+      
+      if (!paymentWindow) {
+        toast({
+          title: "Bloqueador de ventanas",
+          description: "Por favor permite las ventanas emergentes para continuar con el pago",
+          variant: "destructive"
+        });
+        setIsProcessing(false);
+        return;
+      }
 
       toast({
-        title: "Redirigiendo a MercadoPago",
-        description: "Serás redirigido para completar el pago",
+        title: "¡Redirigiendo a MercadoPago!",
+        description: "Completa el pago en la nueva ventana",
       });
 
-      handleClose();
+      // No cerrar inmediatamente, dar tiempo para que se abra la ventana
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating payment:', error);
       toast({
-        title: "Error",
-        description: "No se pudo procesar el pago. Intenta nuevamente.",
+        title: "Error al procesar el pago",
+        description: error.message || "No se pudo procesar el pago. Por favor intenta nuevamente.",
         variant: "destructive"
       });
-    } finally {
       setIsProcessing(false);
     }
   };

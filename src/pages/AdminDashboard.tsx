@@ -61,11 +61,14 @@ const AdminDashboard = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       const typedReservations = (data || []).map(reservation => ({
         ...reservation,
-        payment_status: reservation.payment_status as 'pending' | 'completed' | 'failed'
+        payment_status: (reservation.payment_status as 'pending' | 'completed' | 'failed') || 'pending'
       }));
       
       setReservations(typedReservations);
@@ -77,14 +80,14 @@ const AdminDashboard = () => {
       const failed = typedReservations.filter(r => r.payment_status === 'failed').length;
       const totalRevenue = typedReservations
         .filter(r => r.payment_status === 'completed')
-        .reduce((sum, r) => sum + Number(r.amount), 0);
+        .reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
       
       setStats({ total, completed, pending, failed, totalRevenue });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching reservations:', error);
       toast({
-        title: "Error",
-        description: "No se pudieron cargar las reservas",
+        title: "Error al cargar reservas",
+        description: error.message || "No se pudieron cargar las reservas. Intenta nuevamente.",
         variant: "destructive"
       });
     } finally {
@@ -102,15 +105,29 @@ const AdminDashboard = () => {
   };
 
   const generateQRCode = (reservation: Reservation) => {
-    const qrData = `RESERVA-${reservation.id}
-Deporte: ${reservation.sport.toUpperCase()}
-Fecha: ${format(new Date(reservation.date), "d 'de' MMMM, yyyy", { locale: es })}
-Hora: ${reservation.time}
-Cliente: ${reservation.customer_name}
-Monto: $${reservation.amount}
+    try {
+      if (!reservation || !reservation.id) {
+        throw new Error("Reserva inválida");
+      }
+
+      const qrData = `RESERVA-${reservation.id}
+Deporte: ${(reservation.sport || 'N/A').toUpperCase()}
+Fecha: ${reservation.date ? format(new Date(reservation.date), "d 'de' MMMM, yyyy", { locale: es }) : 'N/A'}
+Hora: ${reservation.time || 'N/A'}
+Cliente: ${reservation.customer_name || 'N/A'}
+Monto: $${reservation.amount || 0}
 Estado: APROBADO ✓`;
-    
-    return btoa(qrData);
+      
+      return btoa(qrData);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo generar el código QR",
+        variant: "destructive"
+      });
+      return '';
+    }
   };
 
   const handleShowQR = (reservation: Reservation) => {

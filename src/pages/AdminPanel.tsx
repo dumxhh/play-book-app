@@ -91,15 +91,23 @@ const AdminPanel = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
-      setReservations((data || []) as Reservation[]);
-      calculateStats((data || []) as Reservation[]);
-    } catch (error) {
+      const safeReservations = (data || []).map(r => ({
+        ...r,
+        payment_status: (r.payment_status as 'pending' | 'completed' | 'failed') || 'pending'
+      })) as Reservation[];
+
+      setReservations(safeReservations);
+      calculateStats(safeReservations);
+    } catch (error: any) {
       console.error('Error fetching reservations:', error);
       toast({
-        title: "Error",
-        description: "No se pudieron cargar las reservas",
+        title: "Error al cargar reservas",
+        description: error.message || "No se pudieron cargar las reservas",
         variant: "destructive"
       });
     } finally {
@@ -115,10 +123,19 @@ const AdminPanel = () => {
         .order('sport', { ascending: true })
         .order('display_order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
       setPhotos(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching photos:', error);
+      toast({
+        title: "Error al cargar fotos",
+        description: error.message || "No se pudieron cargar las fotos",
+        variant: "destructive"
+      });
     }
   };
 
