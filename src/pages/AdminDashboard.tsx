@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Calendar, 
   Clock, 
@@ -15,7 +16,10 @@ import {
   Clock as ClockIcon,
   LogOut,
   Settings,
-  BarChart3
+  BarChart3,
+  QrCode,
+  Mail,
+  Eye
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -26,6 +30,9 @@ import type { Reservation } from "@/types/reservation";
 const AdminDashboard = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+  const [showQRDialog, setShowQRDialog] = useState(false);
+  const [qrCode, setQrCode] = useState<string>("");
   const [stats, setStats] = useState({
     total: 0,
     completed: 0,
@@ -92,6 +99,72 @@ const AdminDashboard = () => {
       description: "Has cerrado sesión correctamente",
     });
     navigate("/admin/login");
+  };
+
+  const generateQRCode = (reservation: Reservation) => {
+    const qrData = `RESERVA-${reservation.id}
+Deporte: ${reservation.sport.toUpperCase()}
+Fecha: ${format(new Date(reservation.date), "d 'de' MMMM, yyyy", { locale: es })}
+Hora: ${reservation.time}
+Cliente: ${reservation.customer_name}
+Monto: $${reservation.amount}
+Estado: APROBADO ✓`;
+    
+    return btoa(qrData);
+  };
+
+  const handleShowQR = (reservation: Reservation) => {
+    if (reservation.payment_status !== 'completed') {
+      toast({
+        title: "QR no disponible",
+        description: "El QR solo está disponible para pagos aprobados",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const qr = generateQRCode(reservation);
+    setQrCode(qr);
+    setSelectedReservation(reservation);
+    setShowQRDialog(true);
+  };
+
+  const handleSendQREmail = async (reservation: Reservation) => {
+    if (!reservation.customer_email) {
+      toast({
+        title: "Email no disponible",
+        description: "Esta reserva no tiene un email registrado",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.functions.invoke('send-qr-email', {
+        body: {
+          email: reservation.customer_email,
+          customerName: reservation.customer_name,
+          sport: reservation.sport,
+          date: reservation.date,
+          time: reservation.time,
+          amount: reservation.amount
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Email enviado",
+        description: `QR enviado a ${reservation.customer_email}`,
+      });
+    } catch (error) {
+      console.error('Error sending QR email:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo enviar el email con el QR",
+        variant: "destructive"
+      });
+    }
   };
 
   const getPaymentStatusColor = (status: string) => {
@@ -327,6 +400,31 @@ const AdminDashboard = () => {
                           ID: {reservation.id.slice(0, 8)}...
                         </div>
                       </div>
+
+                      {reservation.payment_status === 'completed' && (
+                        <div className="flex gap-2 mt-3">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleShowQR(reservation)}
+                          >
+                            <QrCode className="w-4 h-4 mr-2" />
+                            Ver QR
+                          </Button>
+                          {reservation.customer_email && (
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="flex-1"
+                              onClick={() => handleSendQREmail(reservation)}
+                            >
+                              <Mail className="w-4 h-4 mr-2" />
+                              Enviar
+                            </Button>
+                          )}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
@@ -335,6 +433,65 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* QR Code Dialog */}
+      <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5 text-primary" />
+              QR de Acceso - Reserva Aprobada
+            </DialogTitle>
+          </DialogHeader>
+          {selectedReservation && (
+            <div className="space-y-4">
+              <div className="bg-gradient-card p-6 rounded-lg border border-border">
+                <div className="bg-white p-4 rounded-lg mb-4 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-48 h-48 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center mb-2">
+                      <QrCode className="w-24 h-24 text-primary" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">Código QR de acceso</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Deporte:</span>
+                    <span className="font-medium capitalize">{selectedReservation.sport}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fecha:</span>
+                    <span className="font-medium">
+                      {format(new Date(selectedReservation.date), "d 'de' MMMM", { locale: es })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Hora:</span>
+                    <span className="font-medium">{selectedReservation.time}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Cliente:</span>
+                    <span className="font-medium">{selectedReservation.customer_name}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Estado:</span>
+                    <Badge className="bg-success/20 text-success border-success/30">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Aprobado
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-xs text-center text-muted-foreground">
+                Presente este QR al llegar a la cancha
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

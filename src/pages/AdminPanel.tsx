@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +64,7 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSport, setSelectedSport] = useState('all');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Form states for photo management
   const [newPhoto, setNewPhoto] = useState({
@@ -73,9 +75,14 @@ const AdminPanel = () => {
   });
 
   useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
+    if (!isLoggedIn) {
+      navigate("/admin/login");
+      return;
+    }
     fetchReservations();
     fetchPhotos();
-  }, []);
+  }, [navigate]);
 
   const fetchReservations = async () => {
     try {
@@ -303,6 +310,16 @@ const AdminPanel = () => {
           <div className="flex gap-2">
             <Button variant="outline" onClick={fetchReservations}>
               Actualizar
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                localStorage.removeItem("isAdminLoggedIn");
+                toast({ title: "Sesión cerrada" });
+                navigate("/admin/login");
+              }}
+            >
+              Cerrar Sesión
             </Button>
           </div>
         </div>

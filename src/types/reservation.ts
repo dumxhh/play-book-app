@@ -6,6 +6,7 @@ export interface Reservation {
   duration: number;
   customer_name: string;
   customer_phone: string;
+  customer_email?: string;
   amount: number;
   payment_status: 'pending' | 'completed' | 'failed';
   payment_id?: string;
