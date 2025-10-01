@@ -13,6 +13,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPanel from "./pages/AdminPanel";
 import TournamentRequest from "./pages/TournamentRequest";
+import ClubNews from "./pages/ClubNews";
+import Shop from "./pages/Shop";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +41,8 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/panel" element={<AdminPanel />} />
             <Route path="/torneos" element={<TournamentRequest />} />
+            <Route path="/novedades" element={<ClubNews />} />
+            <Route path="/tienda" element={<Shop />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

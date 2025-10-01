@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      club_news: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          cover_image: string | null
+          created_at: string | null
+          id: string
+          images: string[] | null
+          is_published: boolean | null
+          published_at: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author: string
+          category?: string
+          content: string
+          cover_image?: string | null
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_published?: boolean | null
+          published_at?: string | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          cover_image?: string | null
+          created_at?: string | null
+          id?: string
+          images?: string[] | null
+          is_published?: boolean | null
+          published_at?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       court_photos: {
         Row: {
           created_at: string
@@ -47,6 +92,60 @@ export type Database = {
           sport?: string
           title?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recurring_reservations: {
+        Row: {
+          amount: number
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          day_of_week: number
+          duration: number
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          payment_method: string | null
+          sport: string
+          start_date: string
+          time: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          day_of_week: number
+          duration: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_method?: string | null
+          sport: string
+          start_date: string
+          time: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          day_of_week?: number
+          duration?: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          payment_method?: string | null
+          sport?: string
+          start_date?: string
+          time?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -123,6 +222,143 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string
+          id: string
+          is_approved: boolean | null
+          photos: string[] | null
+          rating: number
+          reservation_id: string | null
+          sport: string
+          updated_at: string | null
+        }
+        Insert: {
+          comment: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name: string
+          id?: string
+          is_approved?: boolean | null
+          photos?: string[] | null
+          rating: number
+          reservation_id?: string | null
+          sport: string
+          updated_at?: string | null
+        }
+        Update: {
+          comment?: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          id?: string
+          is_approved?: boolean | null
+          photos?: string[] | null
+          rating?: number
+          reservation_id?: string | null
+          sport?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_orders: {
+        Row: {
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          id: string
+          items: Json
+          payment_id: string | null
+          status: string
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          id?: string
+          items: Json
+          payment_id?: string | null
+          status?: string
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          items?: Json
+          payment_id?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      shop_products: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          images: string[] | null
+          is_available: boolean | null
+          is_rental: boolean | null
+          name: string
+          price: number
+          rental_duration_hours: number | null
+          sport: string | null
+          stock_quantity: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_available?: boolean | null
+          is_rental?: boolean | null
+          name: string
+          price: number
+          rental_duration_hours?: number | null
+          sport?: string | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_available?: boolean | null
+          is_rental?: boolean | null
+          name?: string
+          price?: number
+          rental_duration_hours?: number | null
+          sport?: string | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       time_blocks: {
         Row: {

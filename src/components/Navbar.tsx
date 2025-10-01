@@ -18,6 +18,12 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
     { id: "precios", label: "Precios" },
   ];
 
+  const externalLinks = [
+    { path: "/novedades", label: "Novedades" },
+    { path: "/tienda", label: "Tienda" },
+    { path: "/torneos", label: "Torneos" },
+  ];
+
   const handleNavClick = (sectionId: string) => {
     onNavigate(sectionId);
     setIsMenuOpen(false);
@@ -53,11 +59,13 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                 {item.label}
               </button>
             ))}
-            <Link to="/torneos">
-              <button className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
-                Torneos
-              </button>
-            </Link>
+            {externalLinks.map((link) => (
+              <Link key={link.path} to={link.path}>
+                <button className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+                  {link.label}
+                </button>
+              </Link>
+            ))}
           </div>
 
           {/* Mobile Menu Button */}
@@ -93,11 +101,13 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
                   {item.label}
                 </button>
               ))}
-              <Link to="/torneos">
-                <button className="text-left py-2 px-4 rounded-lg transition-colors text-muted-foreground hover:bg-muted w-full">
-                  Torneos
-                </button>
-              </Link>
+              {externalLinks.map((link) => (
+                <Link key={link.path} to={link.path}>
+                  <button className="text-left py-2 px-4 rounded-lg transition-colors text-muted-foreground hover:bg-muted w-full">
+                    {link.label}
+                  </button>
+                </Link>
+              ))}
             </div>
           </div>
         )}

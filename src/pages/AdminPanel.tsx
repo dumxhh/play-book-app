@@ -16,6 +16,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import AdminReservationManagement from '@/components/AdminReservationManagement';
 import GalleryManagement from '@/components/GalleryManagement';
+import ReviewsManagement from '@/components/admin/ReviewsManagement';
+import NewsManagement from '@/components/admin/NewsManagement';
+import ShopManagement from '@/components/admin/ShopManagement';
+import RecurringReservationsManagement from '@/components/admin/RecurringReservationsManagement';
 
 interface Reservation {
   id: string;
@@ -405,11 +409,15 @@ const AdminPanel = () => {
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="reservations">Reservas</TabsTrigger>
             <TabsTrigger value="admin-reservations">Gestión Reservas</TabsTrigger>
+            <TabsTrigger value="recurring">Recurrentes</TabsTrigger>
             <TabsTrigger value="photos">Fotos Canchas</TabsTrigger>
+            <TabsTrigger value="reviews">Reseñas</TabsTrigger>
+            <TabsTrigger value="news">Novedades</TabsTrigger>
+            <TabsTrigger value="shop">Tienda</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
@@ -571,6 +579,22 @@ const AdminPanel = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <ReviewsManagement />
+          </TabsContent>
+
+          <TabsContent value="recurring">
+            <RecurringReservationsManagement />
+          </TabsContent>
+
+          <TabsContent value="news">
+            <NewsManagement />
+          </TabsContent>
+
+          <TabsContent value="shop">
+            <ShopManagement />
           </TabsContent>
         </Tabs>
       </div>
