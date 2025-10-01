@@ -12,6 +12,8 @@ Deno.serve(async (req) => {
   }
 
   try {
+    console.log('Webhook called - Method:', req.method);
+    
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -19,15 +21,26 @@ Deno.serve(async (req) => {
 
     const accessToken = Deno.env.get('MERCADOPAGO_ACCESS_TOKEN')
     if (!accessToken) {
+      console.error('MercadoPago access token not configured')
       throw new Error('MercadoPago access token not configured')
     }
 
     const body = await req.json()
-    console.log('Webhook received:', body)
+    console.log('Webhook received:', JSON.stringify(body, null, 2))
 
     // Verify webhook is from MercadoPago
-    if (body.type === 'payment') {
-      const paymentId = body.data.id
+    if (body.type === 'payment' || body.action === 'payment.created' || body.action === 'payment.updated') {
+      const paymentId = body.data?.id || body.id
+      
+      if (!paymentId) {
+        console.error('No payment ID found in webhook body')
+        return new Response(
+          JSON.stringify({ error: 'No payment ID found' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      console.log('Fetching payment details for ID:', paymentId)
       
       // Get payment details from MercadoPago
       const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
@@ -36,17 +49,23 @@ Deno.serve(async (req) => {
         }
       })
 
+      if (!mpResponse.ok) {
+        console.error('MercadoPago API error:', mpResponse.status, await mpResponse.text())
+        throw new Error(`MercadoPago API returned ${mpResponse.status}`)
+      }
+
       const paymentData = await mpResponse.json()
-      console.log('Payment data from MP:', paymentData)
+      console.log('Payment data from MP:', JSON.stringify(paymentData, null, 2))
 
       if (paymentData.external_reference) {
         const reservationId = paymentData.external_reference
+        console.log('Processing payment for reservation:', reservationId)
 
         // Update transaction status
         const { error: transactionError } = await supabase
           .from('transactions')
           .update({
-            mercadopago_payment_id: paymentId,
+            mercadopago_payment_id: paymentId.toString(),
             status: paymentData.status,
             payment_method: paymentData.payment_method_id
           })
@@ -54,6 +73,8 @@ Deno.serve(async (req) => {
 
         if (transactionError) {
           console.error('Error updating transaction:', transactionError)
+        } else {
+          console.log('Transaction updated successfully')
         }
 
         // Update reservation payment status
@@ -75,6 +96,7 @@ Deno.serve(async (req) => {
           console.error('Error updating reservation:', reservationError)
         } else {
           console.log(`Reservation ${reservationId} updated to status: ${paymentStatus}`)
+          console.log('Reservation data:', reservationData)
           
           // Si el pago fue aprobado y hay email, enviar QR automáticamente
           if (paymentStatus === 'completed' && reservationData?.customer_email) {
@@ -107,12 +129,17 @@ Deno.serve(async (req) => {
             }
           }
         }
+      } else {
+        console.log('No external_reference found in payment data')
       }
+    } else {
+      console.log('Webhook type not handled:', body.type || body.action)
     }
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({ success: true, message: 'Webhook processed' }),
       { 
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
