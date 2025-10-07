@@ -13,6 +13,7 @@ Deno.serve(async (req) => {
 
   try {
     console.log('Webhook called - Method:', req.method);
+    console.log('Headers:', JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
     
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -25,7 +26,19 @@ Deno.serve(async (req) => {
       throw new Error('MercadoPago access token not configured')
     }
 
-    const body = await req.json()
+    // Get the raw text first to debug
+    const rawBody = await req.text()
+    console.log('Raw body received:', rawBody)
+    
+    if (!rawBody || rawBody.trim() === '') {
+      console.log('Empty body received, returning success')
+      return new Response(
+        JSON.stringify({ success: true, message: 'Empty body received' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const body = JSON.parse(rawBody)
     console.log('Webhook received:', JSON.stringify(body, null, 2))
 
     // Verify webhook is from MercadoPago
