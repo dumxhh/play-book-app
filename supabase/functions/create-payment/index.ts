@@ -72,7 +72,8 @@ Deno.serve(async (req) => {
         pending: `${req.headers.get('origin')}/payment/pending`
       },
       auto_return: 'approved',
-      external_reference: reservation.id
+      external_reference: reservation.id,
+      notification_url: `${Deno.env.get('SUPABASE_URL')}/functions/v1/payment-webhook`
     }
 
     console.log('Creating MercadoPago preference:', preference)
