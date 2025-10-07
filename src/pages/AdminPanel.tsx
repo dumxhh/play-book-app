@@ -316,93 +316,120 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver al Inicio
+        {/* Header con gradiente */}
+        <div className="bg-gradient-to-r from-primary to-accent rounded-xl p-6 shadow-lg">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/30">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Volver
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-white">Panel Administrativo</h1>
+                <p className="text-white/80 text-sm mt-1">Gestiona tu club deportivo</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={fetchReservations}
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              >
+                Actualizar
               </Button>
-            </Link>
-            <h1 className="text-3xl font-bold text-primary">Panel Administrativo</h1>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={fetchReservations}>
-              Actualizar
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                localStorage.removeItem("isAdminLoggedIn");
-                toast({ title: "Sesión cerrada" });
-                navigate("/admin/login");
-              }}
-            >
-              Cerrar Sesión
-            </Button>
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={() => {
+                  localStorage.removeItem("isAdminLoggedIn");
+                  toast({ title: "Sesión cerrada" });
+                  navigate("/admin/login");
+                }}
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              >
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards con animación y gradientes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card>
+          <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Reservas</p>
-                  <p className="text-2xl font-bold">{stats.totalReservations}</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    {stats.totalReservations}
+                  </p>
                 </div>
-                <Calendar className="h-8 w-8 text-muted-foreground" />
+                <div className="p-3 bg-primary/10 rounded-full">
+                  <Calendar className="h-6 w-6 text-primary" />
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Ingresos Totales</p>
-                  <p className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Ingresos</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    ${stats.totalRevenue.toLocaleString()}
+                  </p>
                 </div>
-                <DollarSign className="h-8 w-8 text-muted-foreground" />
+                <div className="p-3 bg-success/10 rounded-full">
+                  <DollarSign className="h-6 w-6 text-success" />
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pagos Completados</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.completedPayments}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Completados</p>
+                  <p className="text-3xl font-bold text-success">{stats.completedPayments}</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-green-500" />
+                <div className="p-3 bg-success/10 rounded-full">
+                  <CheckCircle className="h-6 w-6 text-success" />
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pagos Pendientes</p>
-                  <p className="text-2xl font-bold text-yellow-600">{stats.pendingPayments}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Pendientes</p>
+                  <p className="text-3xl font-bold text-warning">{stats.pendingPayments}</p>
                 </div>
-                <Clock className="h-8 w-8 text-yellow-500" />
+                <div className="p-3 bg-warning/10 rounded-full">
+                  <Clock className="h-6 w-6 text-warning" />
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Pagos Rechazados</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.failedPayments}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Rechazados</p>
+                  <p className="text-3xl font-bold text-destructive">{stats.failedPayments}</p>
                 </div>
-                <XCircle className="h-8 w-8 text-red-500" />
+                <div className="p-3 bg-destructive/10 rounded-full">
+                  <XCircle className="h-6 w-6 text-destructive" />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -423,9 +450,14 @@ const AdminPanel = () => {
 
           <TabsContent value="dashboard" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Reservas por Deporte</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                    </div>
+                    Reservas por Deporte
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -440,7 +472,7 @@ const AdminPanel = () => {
                         label={({ sport, reservas }) => `${sport}: ${reservas}`}
                       >
                         {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={`hsl(${index * 90}, 70%, 60%)`} />
+                          <Cell key={`cell-${index}`} fill={`hsl(${120 + index * 40}, 65%, ${45 + index * 5}%)`} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -449,18 +481,42 @@ const AdminPanel = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Ingresos por Día (Últimos 7 días)</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="p-2 bg-success/10 rounded-lg">
+                      <DollarSign className="h-5 w-5 text-success" />
+                    </div>
+                    Ingresos por Día (Últimos 7 días)
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <AreaChart data={revenueChartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="fecha" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => [`$${value}`, 'Ingresos']} />
-                      <Area type="monotone" dataKey="ingresos" stroke="#8884d8" fill="#8884d8" />
+                      <defs>
+                        <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(120, 65%, 32%)" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="hsl(120, 65%, 32%)" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="fecha" stroke="hsl(var(--muted-foreground))" />
+                      <YAxis stroke="hsl(var(--muted-foreground))" />
+                      <Tooltip 
+                        formatter={(value) => [`$${value}`, 'Ingresos']}
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="ingresos" 
+                        stroke="hsl(120, 65%, 32%)" 
+                        strokeWidth={2}
+                        fill="url(#colorIngresos)" 
+                      />
                     </AreaChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -473,10 +529,15 @@ const AdminPanel = () => {
           </TabsContent>
 
           <TabsContent value="reservations" className="space-y-4">
-            <Card>
+            <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Gestión de Reservas</CardTitle>
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Calendar className="h-5 w-5 text-primary" />
+                    </div>
+                    Gestión de Reservas
+                  </CardTitle>
                   <Select value={selectedSport} onValueChange={setSelectedSport}>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Filtrar por deporte" />
@@ -492,34 +553,55 @@ const AdminPanel = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {filteredReservations.map((reservation) => (
-                    <Card key={reservation.id} className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <span className="text-2xl">{getSportEmoji(reservation.sport)}</span>
-                          <div>
-                            <p className="font-semibold">{reservation.customer_name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {reservation.sport.charAt(0).toUpperCase() + reservation.sport.slice(1)} - {reservation.date} {reservation.time}
+                <div className="space-y-3">
+                  {filteredReservations.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-muted-foreground">No hay reservas para mostrar</p>
+                    </div>
+                  ) : (
+                    filteredReservations.map((reservation) => (
+                      <Card 
+                        key={reservation.id} 
+                        className="p-4 bg-card hover:bg-secondary/50 transition-all duration-200 border-l-4"
+                        style={{
+                          borderLeftColor: reservation.payment_status === 'completed' 
+                            ? 'hsl(var(--success))' 
+                            : reservation.payment_status === 'failed'
+                            ? 'hsl(var(--destructive))'
+                            : 'hsl(var(--warning))'
+                        }}
+                      >
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                          <div className="flex items-center gap-4">
+                            <div className="text-4xl p-3 bg-primary/10 rounded-lg">
+                              {getSportEmoji(reservation.sport)}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-lg">{reservation.customer_name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {reservation.sport.charAt(0).toUpperCase() + reservation.sport.slice(1)} • {reservation.date} • {reservation.time}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                📞 {reservation.customer_phone} {reservation.customer_email && `• ✉️ ${reservation.customer_email}`}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                              ${reservation.amount}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {reservation.customer_phone} {reservation.customer_email && `• ${reservation.customer_email}`}
-                            </p>
+                            <div className="flex items-center gap-2 justify-end mt-2">
+                              {getPaymentStatusIcon(reservation.payment_status)}
+                              <Badge className={getPaymentStatusColor(reservation.payment_status)}>
+                                {getPaymentStatusText(reservation.payment_status)}
+                              </Badge>
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold">${reservation.amount}</p>
-                          <div className="flex items-center gap-2 justify-end">
-                            {getPaymentStatusIcon(reservation.payment_status)}
-                            <Badge className={getPaymentStatusColor(reservation.payment_status)}>
-                              {getPaymentStatusText(reservation.payment_status)}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
+                      </Card>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -531,49 +613,77 @@ const AdminPanel = () => {
 
           <TabsContent value="analytics" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Reservas por Deporte (Barras)</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                    </div>
+                    Reservas por Deporte
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="sport" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="reservas" fill="#8884d8" />
+                      <defs>
+                        <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(120, 65%, 32%)" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="hsl(142, 76%, 36%)" stopOpacity={0.6}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="sport" stroke="hsl(var(--muted-foreground))" />
+                      <YAxis stroke="hsl(var(--muted-foreground))" />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Bar dataKey="reservas" fill="url(#colorBar)" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle>Estados de Pago</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-primary" />
+                    </div>
+                    Estados de Pago
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 bg-success/10 rounded-lg border border-success/20 hover:border-success/40 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-success/20 rounded-full">
+                          <CheckCircle className="h-5 w-5 text-success" />
+                        </div>
                         <span className="font-medium">Pagos Completados</span>
                       </div>
-                      <span className="text-xl font-bold text-green-600">{stats.completedPayments}</span>
+                      <span className="text-2xl font-bold text-success">{stats.completedPayments}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-yellow-500" />
+                    <div className="flex items-center justify-between p-4 bg-warning/10 rounded-lg border border-warning/20 hover:border-warning/40 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-warning/20 rounded-full">
+                          <Clock className="h-5 w-5 text-warning" />
+                        </div>
                         <span className="font-medium">Pagos Pendientes</span>
                       </div>
-                      <span className="text-xl font-bold text-yellow-600">{stats.pendingPayments}</span>
+                      <span className="text-2xl font-bold text-warning">{stats.pendingPayments}</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <XCircle className="h-5 w-5 text-red-500" />
+                    <div className="flex items-center justify-between p-4 bg-destructive/10 rounded-lg border border-destructive/20 hover:border-destructive/40 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-destructive/20 rounded-full">
+                          <XCircle className="h-5 w-5 text-destructive" />
+                        </div>
                         <span className="font-medium">Pagos Rechazados</span>
                       </div>
-                      <span className="text-xl font-bold text-red-600">{stats.failedPayments}</span>
+                      <span className="text-2xl font-bold text-destructive">{stats.failedPayments}</span>
                     </div>
                   </div>
                 </CardContent>
