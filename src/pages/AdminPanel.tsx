@@ -20,6 +20,7 @@ import ReviewsManagement from '@/components/admin/ReviewsManagement';
 import NewsManagement from '@/components/admin/NewsManagement';
 import ShopManagement from '@/components/admin/ShopManagement';
 import RecurringReservationsManagement from '@/components/admin/RecurringReservationsManagement';
+import { SeedGallery } from '@/components/SeedGallery';
 
 interface Reservation {
   id: string;
@@ -608,6 +609,27 @@ const AdminPanel = () => {
           </TabsContent>
 
           <TabsContent value="photos" className="space-y-4">
+            <Card className="bg-gradient-to-br from-card to-secondary border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Camera className="h-5 w-5 text-primary" />
+                    </div>
+                    Fotos de Canchas Generadas
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Haz clic en el botón para subir automáticamente las fotos generadas por IA de las canchas a la galería.
+                  </p>
+                  <SeedGallery />
+                </div>
+              </CardContent>
+            </Card>
+            
             <GalleryManagement photos={photos} onPhotosUpdate={fetchPhotos} />
           </TabsContent>
 
