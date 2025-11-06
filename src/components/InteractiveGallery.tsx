@@ -147,9 +147,13 @@ const InteractiveGallery = () => {
               <CardContent className="p-0 relative">
                 <div className="aspect-square overflow-hidden">
                   <img
-                    src={photo.image_url}
+                    src={photo.image_url.replace('/src/assets/', '/assets/')}
                     alt={photo.title || `${photo.sport} court`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }}
                   />
                 </div>
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
@@ -196,9 +200,13 @@ const InteractiveGallery = () => {
             {selectedPhoto && (
               <div className="relative w-full h-full">
                 <img
-                  src={selectedPhoto.image_url}
+                  src={selectedPhoto.image_url.replace('/src/assets/', '/assets/')}
                   alt={selectedPhoto.title || `${selectedPhoto.sport} court`}
                   className="w-full h-full object-contain bg-black"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.svg';
+                  }}
                 />
                 
                 {/* Navigation Controls */}

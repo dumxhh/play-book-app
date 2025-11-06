@@ -16,7 +16,7 @@ import type { Reservation, SportType } from "@/types/reservation";
 interface ReservaModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onReserva: (reservation: Omit<Reservation, 'id'>) => void;
+  onReserva: () => void;
   existingReservations: Reservation[];
 }
 
@@ -225,7 +225,7 @@ const ReservaModal = ({ isOpen, onClose, onReserva, existingReservations }: Rese
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto court-background backdrop-blur-sm border-2 animate-rainbow-border">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto court-background backdrop-blur-sm border-2 animate-rainbow-border z-50">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center animate-neon-flicker text-white">
             ⚽ Reservar Cancha 🏓

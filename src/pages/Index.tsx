@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import HorarioSection from "@/components/HorarioSection";
@@ -10,36 +10,28 @@ import InteractiveGallery from "@/components/InteractiveGallery";
 import FloatingWeather from "@/components/FloatingWeather";
 import ReservaModal from "@/components/ReservaModal";
 import ChatBot from "@/components/ChatBot";
+import { supabase } from "@/integrations/supabase/client";
 import type { Reservation } from "@/types/reservation";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("inicio");
   const [isReservaModalOpen, setIsReservaModalOpen] = useState(false);
-  const [reservations, setReservations] = useState<Reservation[]>([
-    // Sample reservations
-    {
-      id: "1",
-      sport: "futbol",
-      date: "2024-01-06",
-      time: "14:00",
-      duration: 90,
-      customer_name: "Juan Pérez",
-      customer_phone: "1234567890",
-      amount: 120,
-      payment_status: "completed"
-    },
-    {
-      id: "2",
-      sport: "paddle", 
-      date: "2024-01-06",
-      time: "16:00",
-      duration: 60,
-      customer_name: "María González",
-      customer_phone: "0987654321",
-      amount: 40,
-      payment_status: "completed"
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  const fetchReservations = async () => {
+    const { data, error } = await supabase
+      .from("reservations")
+      .select("*")
+      .eq("payment_status", "completed");
+
+    if (!error && data) {
+      setReservations(data as Reservation[]);
     }
-  ]);
+  };
 
   const handleNavigate = (section: string) => {
     setActiveSection(section);
@@ -53,12 +45,9 @@ const Index = () => {
     }
   };
 
-  const handleReserva = (newReservation: Omit<Reservation, 'id'>) => {
-    const reservation: Reservation = {
-      ...newReservation,
-      id: Date.now().toString()
-    };
-    setReservations(prev => [...prev, reservation]);
+  const handleReserva = () => {
+    // Refresh reservations after successful payment
+    fetchReservations();
     setIsReservaModalOpen(false);
   };
 
