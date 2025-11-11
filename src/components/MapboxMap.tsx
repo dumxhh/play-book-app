@@ -24,10 +24,9 @@ const MapboxMap = () => {
 
         mapboxgl.accessToken = data.token;
         
-        // Coordinates for "Av. Deportiva 123, Centro Deportivo"
-        // Using Buenos Aires area coordinates as example
-        const lng = -58.3816;
-        const lat = -34.6037;
+        // Coordinates for Santa Teresita, Buenos Aires
+        const lng = -56.713126;
+        const lat = -36.533991;
 
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
@@ -78,7 +77,7 @@ const MapboxMap = () => {
           .setPopup(
             new mapboxgl.Popup({ offset: 25 })
               .setHTML(
-                '<div style="padding: 8px;"><h3 style="font-weight: bold; margin-bottom: 4px;">MatchPoint</h3><p style="font-size: 14px;">Av. Deportiva 123<br/>Centro Deportivo</p></div>'
+                '<div style="padding: 8px;"><h3 style="font-weight: bold; margin-bottom: 4px;">MatchPoint</h3><p style="font-size: 14px;">Santa Teresita<br/>Buenos Aires, Argentina</p></div>'
               )
           )
           .addTo(map.current);

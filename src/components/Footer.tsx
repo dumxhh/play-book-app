@@ -82,7 +82,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-white/80" />
-                <span className="text-white/80 text-sm">Av. Deportiva 123, Ciudad Deportiva</span>
+                <span className="text-white/80 text-sm">Santa Teresita, Buenos Aires, Argentina</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Clock className="w-4 h-4 text-white/80" />

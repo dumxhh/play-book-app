@@ -39,15 +39,15 @@ const UbicacionSection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-foreground font-medium mb-2">
-                  Av. Deportiva 123, Centro Deportivo
+                  Santa Teresita, Buenos Aires
                 </p>
                 <p className="text-muted-foreground mb-4">
-                  Ciudad Deportiva, CP 12345
+                  Provincia de Buenos Aires, Argentina
                 </p>
                 <Button 
                   variant="outline" 
                   className="w-full" 
-                  onClick={() => window.open('https://maps.google.com/?q=Av+Deportiva+123+Centro+Deportivo', '_blank')}
+                  onClick={() => window.open('https://maps.app.goo.gl/Db4VjYuz26ZT7XUP9', '_blank')}
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   🗺️ Abrir en Google Maps
