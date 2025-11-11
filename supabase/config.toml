@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.send-qr-email]
 verify_jwt = false
+
+[functions.send-reservation-reminder]
+verify_jwt = false

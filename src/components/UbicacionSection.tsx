@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Clock, Car, Bus, ExternalLink } from "lucide-react";
+import MapboxMap from './MapboxMap';
+import PushNotifications from './PushNotifications';
 
 const UbicacionSection = () => {
   return (
@@ -17,25 +19,11 @@ const UbicacionSection = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Static Map Placeholder */}
+          {/* Interactive Map */}
           <Card className="bg-gradient-card border-border shadow-soft overflow-hidden">
             <CardContent className="p-0">
-              <div className="aspect-video bg-muted/50 flex flex-col items-center justify-center p-6 space-y-4">
-                <MapPin className="w-16 h-16 text-primary" />
-                <div className="text-center space-y-2">
-                  <p className="text-lg font-medium text-foreground">Mapa Interactivo</p>
-                  <p className="text-sm text-muted-foreground">
-                    Pronto disponible - mientras tanto puedes usar Google Maps
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    className="mt-4" 
-                    onClick={() => window.open('https://maps.google.com/?q=Av+Deportiva+123+Centro+Deportivo', '_blank')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    🗺️ Abrir en Google Maps
-                  </Button>
-                </div>
+              <div className="aspect-video">
+                <MapboxMap />
               </div>
             </CardContent>
           </Card>
@@ -66,6 +54,8 @@ const UbicacionSection = () => {
                 </Button>
               </CardContent>
             </Card>
+
+            <PushNotifications />
 
             <Card className="bg-gradient-card border-border shadow-soft">
               <CardHeader>
@@ -104,7 +94,7 @@ const UbicacionSection = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium">reservas@sportclub.com</p>
+                  <p className="font-medium">reservas@matchpoint.com</p>
                 </div>
               </CardContent>
             </Card>

@@ -18,7 +18,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '¡Hola! Soy tu asistente virtual del club deportivo. ¿En qué puedo ayudarte hoy? Puedo darte información sobre reservas, horarios, precios y nuestros deportes disponibles.',
+      text: '¡Hola! Soy tu asistente virtual de MatchPoint. ¿En qué puedo ayudarte hoy? Puedo darte información sobre reservas, horarios, precios y nuestros deportes disponibles.',
       isBot: true,
       timestamp: new Date()
     }
@@ -56,7 +56,7 @@ const ChatBot = () => {
     }
     
     if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('buenas')) {
-      return '¡Hola! Bienvenido al club deportivo. ¿En qué puedo ayudarte? Puedo darte información sobre horarios, precios, reservas o ubicación.';
+      return '¡Hola! Bienvenido a MatchPoint. ¿En qué puedo ayudarte? Puedo darte información sobre horarios, precios, reservas o ubicación.';
     }
     
     return null;

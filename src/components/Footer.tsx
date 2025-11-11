@@ -41,12 +41,12 @@ const Footer = () => {
                 <span className="text-2xl font-bold">🏆</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Club Deportivo</h3>
-                <p className="text-sm text-white/80">Connect with sports</p>
+                <h3 className="text-xl font-bold text-white">MatchPoint</h3>
+                <p className="text-sm text-white/80">Tu mejor jugada deportiva</p>
               </div>
             </div>
             <p className="text-white/80 text-sm">
-              El mejor club deportivo para disfrutar del fútbol, paddle, tenis y golf. 
+              MatchPoint - El mejor lugar para disfrutar del fútbol, paddle, tenis y golf. 
               Reserva tu cancha fácilmente y vive la experiencia deportiva que mereces.
             </p>
           </div>
@@ -74,7 +74,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-white/80" />
-                <span className="text-white/80 text-sm">reservas@clubdeportivo.com</span>
+                <span className="text-white/80 text-sm">reservas@matchpoint.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-white/80" />
@@ -130,7 +130,7 @@ const Footer = () => {
         <div className="border-t border-white/20 mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-white/60 text-sm">
-              © {currentYear} Club Deportivo. Todos los derechos reservados.
+              © {currentYear} MatchPoint. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6 text-sm">
               <a href="#" className="text-white/60 hover:text-white transition-colors duration-200">

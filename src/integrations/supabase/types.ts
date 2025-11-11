@@ -95,6 +95,36 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_phone: string | null
+          endpoint: string
+          id: string
+          keys: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          endpoint: string
+          id?: string
+          keys: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          endpoint?: string
+          id?: string
+          keys?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       recurring_reservations: {
         Row: {
           amount: number

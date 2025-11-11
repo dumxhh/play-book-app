@@ -41,7 +41,7 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
             <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">⚽</span>
             </div>
-            <span className="text-xl font-bold text-foreground">Deportes Club</span>
+            <span className="text-xl font-bold text-foreground">MatchPoint</span>
           </div>
 
           {/* Desktop Navigation */}

@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 
 const WhatsAppButton = () => {
   const phoneNumber = "2246536537";
-  const message = "¡Hola! Me interesa hacer una reserva en el club deportivo. ¿Podrían ayudarme?";
+  const message = "¡Hola! Me interesa hacer una reserva en MatchPoint. ¿Podrían ayudarme?";
   
   const handleWhatsAppClick = () => {
     const encodedMessage = encodeURIComponent(message);

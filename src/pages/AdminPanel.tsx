@@ -331,7 +331,7 @@ const AdminPanel = () => {
               </Link>
               <div>
                 <h1 className="text-3xl font-bold text-white">Panel Administrativo</h1>
-                <p className="text-white/80 text-sm mt-1">Gestiona tu club deportivo</p>
+                <p className="text-white/80 text-sm mt-1">Gestiona MatchPoint</p>
               </div>
             </div>
             <div className="flex gap-2">
