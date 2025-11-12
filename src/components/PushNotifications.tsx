@@ -46,6 +46,15 @@ const PushNotifications = () => {
   const subscribeToPush = async () => {
     setLoading(true);
     try {
+      // Get VAPID public key from edge function
+      const { data: vapidData, error: vapidError } = await supabase.functions.invoke('get-vapid-public-key');
+      
+      if (vapidError || !vapidData?.publicKey) {
+        toast.error('Error al obtener la configuración de notificaciones');
+        setLoading(false);
+        return;
+      }
+
       // Register service worker
       const registration = await navigator.serviceWorker.register('/sw.js');
       await navigator.serviceWorker.ready;
@@ -59,9 +68,7 @@ const PushNotifications = () => {
         return;
       }
 
-      // VAPID public key (you need to generate this)
-      // For now, using a placeholder - in production, generate proper VAPID keys
-      const vapidPublicKey = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib37J8xQmrHP_hYGKh4jPWMV0W-4uG0jJ_9F7-GJWOT2HEYw7wsKKzBJeMg';
+      const vapidPublicKey = vapidData.publicKey;
       
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,

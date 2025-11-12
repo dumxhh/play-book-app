@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.53.0";
+import webpush from "npm:web-push@3.6.7";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,6 +30,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Configure web-push with VAPID keys
+    const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
+    const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
+    
+    if (!vapidPublicKey || !vapidPrivateKey) {
+      throw new Error("VAPID keys not configured");
+    }
+
+    webpush.setVapidDetails(
+      "mailto:reservas@matchpoint.com",
+      vapidPublicKey,
+      vapidPrivateKey
+    );
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -83,14 +98,23 @@ const handler = async (req: Request): Promise<Response> => {
         url: "/"
       };
 
-      // Send to all subscriptions (in production, you'd filter by customer)
+      // Send to all subscriptions
       const sendPromises = subscriptions.map(async (subscription: PushSubscription) => {
         try {
-          // Note: In production, you need to use web-push library with proper VAPID keys
-          // This is a simplified example
-          console.log(`Would send notification to ${subscription.endpoint}:`, message);
+          const pushSubscription = {
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: subscription.keys.p256dh,
+              auth: subscription.keys.auth,
+            },
+          };
+
+          await webpush.sendNotification(
+            pushSubscription,
+            JSON.stringify(message)
+          );
           
-          // For now, just log - in production use proper web-push implementation
+          console.log(`Notification sent to ${subscription.endpoint}`);
           return { success: true, endpoint: subscription.endpoint };
         } catch (error) {
           console.error(`Failed to send to ${subscription.endpoint}:`, error);
